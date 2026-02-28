@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptNouchi – Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">Prompt<span>Nouchi</span></a>
+        <div id="counter">3 Prompts affichés</div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Ma Bibliothèque de Prompts</h1>
+            <p>Cliquez sur une carte pour voir les détails ou copiez directement le prompt.</p>
+        </section>
+
+        <nav class="styles-section">
+            <div class="styles-grid">
+                <div class="style-card active" data-filter="all">
+                    <span class="style-icon">#</span>
+                    <h4>Tous</h4>
+                </div>
+                <div class="style-card" data-filter="portrait">
+                    <span class="style-icon">P</span>
+                    <h4>Portrait</h4>
+                </div>
+                <div class="style-card" data-filter="cinematic">
+                    <span class="style-icon">C</span>
+                    <h4>Cinematic</h4>
+                </div>
+            </div>
+        </nav>
+
+        <main class="prompts-grid" id="grid">
+            <article class="card" data-style="cinematic">
+                <img src="Images/Gemini_Generated_Image_44306f44306f4430.png" class="card-img" alt="Caricature 3D">
+                <div class="card-content">
+                    <div class="card-header">CINEMATIC</div>
+                    <p class="prompt-text">Portrait caricatural 3D exagéré et stylisé, cou allongé, style Pixar moderne...</p>
+                    <div class="full-prompt-hidden" style="display:none;">Créez un portrait caricatural 3D exagéré et stylisé à partir de la personne figurant sur la photo de référence ci-jointe. Conservez l'identité du sujet, les traits de son visage, son teint et ses caractéristiques distinctives, mais réinterprète-les sous la forme d'une caricature 3D audacieuse.
+Appliquez une déformation forte et intentionnelle, notamment un cou allongé, un rapport tête-cou surdimensionné, des paupières tombantes, des lèvres épaisses et une asymétrie faciale subtile. Le personnage doit rester humain tout en étant clairement stylisé et expressif.
+Utilisez une finition de surface propre et contrôlée avec une peau lisse de qualité studio. Évitez les textures aléatoires, les imperfections, les taches de rousseur, la saleté, le grain, les mouchetures ou le bruit. Les matériaux doivent paraître polis, haut de gamme et soigneusement conçus, avec une diffusion subtile sous la surface et un ombrage réaliste de la peau.
+Habillez le personnage avec des vêtements de luxe et des accessoires audacieux et haut de gamme, créant ainsi une esthétique étrange, avant-gardiste et collectionnable qui semble dictée par le personnage plutôt que mignonne ou réaliste.
+Éclairez la scène avec un éclairage de studio neutre, des ombres douces et diffuses, et un éclairage uniforme sans contraste marqué. Utilisez un fond gris neutre uni ou blanc cassé.
+Effectuez le rendu en qualité 4K ultra haute définition avec des détails extrêmes, une mise au point nette et une clarté cinématographique. Incluez des détails de micro-surface, des textures haute résolution, un rendu physique (PBR), un éclairage global, des reflets doux et une définition raffinée des matériaux. L'image doit être nette, propre et sans bruit, avec une qualité de rendu professionnelle en studio.
+Pas de texte, de logos ou de filigranes.
+Format d'image : 2:3.</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>
+
+            <article class="card" data-style="portrait">
+                <img src="Images/Gemini_Generated_Image_44306f44306f4430.png" class="card-img" alt="Portrait">
+                <div class="card-content">
+                    <div class="card-header">PORTRAIT</div>
+                    <p class="prompt-text">Portrait réaliste studio, éclairage Rembrandt, haute définition 8k...</p>
+                    <div class="full-prompt-hidden" style="display:none;">Créez un portrait caricatural 3D exagéré et stylisé à partir de la personne figurant sur la photo de référence ci-jointe. Conservez l'identité du sujet, les traits de son visage, son teint et ses caractéristiques distinctives, mais réinterprète-les sous la forme d'une caricature 3D audacieuse.
+Appliquez une déformation forte et intentionnelle, notamment un cou allongé, un rapport tête-cou surdimensionné, des paupières tombantes, des lèvres épaisses et une asymétrie faciale subtile. Le personnage doit rester humain tout en étant clairement stylisé et expressif.
+Utilisez une finition de surface propre et contrôlée avec une peau lisse de qualité studio. Évitez les textures aléatoires, les imperfections, les taches de rousseur, la saleté, le grain, les mouchetures ou le bruit. Les matériaux doivent paraître polis, haut de gamme et soigneusement conçus, avec une diffusion subtile sous la surface et un ombrage réaliste de la peau.
+Habillez le personnage avec des vêtements de luxe et des accessoires audacieux et haut de gamme, créant ainsi une esthétique étrange, avant-gardiste et collectionnable qui semble dictée par le personnage plutôt que mignonne ou réaliste.
+Éclairez la scène avec un éclairage de studio neutre, des ombres douces et diffuses, et un éclairage uniforme sans contraste marqué. Utilisez un fond gris neutre uni ou blanc cassé.
+Effectuez le rendu en qualité 4K ultra haute définition avec des détails extrêmes, une mise au point nette et une clarté cinématographique. Incluez des détails de micro-surface, des textures haute résolution, un rendu physique (PBR), un éclairage global, des reflets doux et une définition raffinée des matériaux. L'image doit être nette, propre et sans bruit, avec une qualité de rendu professionnelle en studio.
+Pas de texte, de logos ou de filigranes.
+Format d'image : 2:3.</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>
+
+            <article class="card" data-style="portrait">
+                <img src="Images/Gemini_Generated_Image_44306f44306f4430.png" class="card-img" alt="Portrait">
+                <div class="card-content">
+                    <div class="card-header">PORTRAIT</div>
+                    <p class="prompt-text">Portrait réaliste studio, éclairage Rembrandt, haute définition 8k...</p>
+                    <div class="full-prompt-hidden" style="display:none;">Créez un portrait caricatural 3D exagéré et stylisé à partir de la personne figurant sur la photo de référence ci-jointe. Conservez l'identité du sujet, les traits de son visage, son teint et ses caractéristiques distinctives, mais réinterprète-les sous la forme d'une caricature 3D audacieuse.
+Appliquez une déformation forte et intentionnelle, notamment un cou allongé, un rapport tête-cou surdimensionné, des paupières tombantes, des lèvres épaisses et une asymétrie faciale subtile. Le personnage doit rester humain tout en étant clairement stylisé et expressif.
+Utilisez une finition de surface propre et contrôlée avec une peau lisse de qualité studio. Évitez les textures aléatoires, les imperfections, les taches de rousseur, la saleté, le grain, les mouchetures ou le bruit. Les matériaux doivent paraître polis, haut de gamme et soigneusement conçus, avec une diffusion subtile sous la surface et un ombrage réaliste de la peau.
+Habillez le personnage avec des vêtements de luxe et des accessoires audacieux et haut de gamme, créant ainsi une esthétique étrange, avant-gardiste et collectionnable qui semble dictée par le personnage plutôt que mignonne ou réaliste.
+Éclairez la scène avec un éclairage de studio neutre, des ombres douces et diffuses, et un éclairage uniforme sans contraste marqué. Utilisez un fond gris neutre uni ou blanc cassé.
+Effectuez le rendu en qualité 4K ultra haute définition avec des détails extrêmes, une mise au point nette et une clarté cinématographique. Incluez des détails de micro-surface, des textures haute résolution, un rendu physique (PBR), un éclairage global, des reflets doux et une définition raffinée des matériaux. L'image doit être nette, propre et sans bruit, avec une qualité de rendu professionnelle en studio.
+Pas de texte, de logos ou de filigranes.
+Format d'image : 2:3.</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>
+
+            <article class="card" data-style="portrait">
+                <img src="Images/Gemini_Generated_Image_44306f44306f4430.png" class="card-img" alt="Portrait">
+                <div class="card-content">
+                    <div class="card-header">PORTRAIT</div>
+                    <p class="prompt-text">Portrait réaliste studio, éclairage Rembrandt, haute définition 8k...</p>
+                    <div class="full-prompt-hidden" style="display:none;">Créez un portrait caricatural 3D exagéré et stylisé à partir de la personne figurant sur la photo de référence ci-jointe. Conservez l'identité du sujet, les traits de son visage, son teint et ses caractéristiques distinctives, mais réinterprète-les sous la forme d'une caricature 3D audacieuse.
+Appliquez une déformation forte et intentionnelle, notamment un cou allongé, un rapport tête-cou surdimensionné, des paupières tombantes, des lèvres épaisses et une asymétrie faciale subtile. Le personnage doit rester humain tout en étant clairement stylisé et expressif.
+Utilisez une finition de surface propre et contrôlée avec une peau lisse de qualité studio. Évitez les textures aléatoires, les imperfections, les taches de rousseur, la saleté, le grain, les mouchetures ou le bruit. Les matériaux doivent paraître polis, haut de gamme et soigneusement conçus, avec une diffusion subtile sous la surface et un ombrage réaliste de la peau.
+Habillez le personnage avec des vêtements de luxe et des accessoires audacieux et haut de gamme, créant ainsi une esthétique étrange, avant-gardiste et collectionnable qui semble dictée par le personnage plutôt que mignonne ou réaliste.
+Éclairez la scène avec un éclairage de studio neutre, des ombres douces et diffuses, et un éclairage uniforme sans contraste marqué. Utilisez un fond gris neutre uni ou blanc cassé.
+Effectuez le rendu en qualité 4K ultra haute définition avec des détails extrêmes, une mise au point nette et une clarté cinématographique. Incluez des détails de micro-surface, des textures haute résolution, un rendu physique (PBR), un éclairage global, des reflets doux et une définition raffinée des matériaux. L'image doit être nette, propre et sans bruit, avec une qualité de rendu professionnelle en studio.
+Pas de texte, de logos ou de filigranes.
+Format d'image : 2:3.</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>
+
+            <article class="card" data-style="portrait">
+                <img src="Images/Gemini_Generated_Image_44306f44306f4430.png" class="card-img" alt="Portrait">
+                <div class="card-content">
+                    <div class="card-header">PORTRAIT</div>
+                    <p class="prompt-text">Portrait réaliste studio, éclairage Rembrandt, haute définition 8k...</p>
+                    <div class="full-prompt-hidden" style="display:none;">Créez un portrait caricatural 3D exagéré et stylisé à partir de la personne figurant sur la photo de référence ci-jointe. Conservez l'identité du sujet, les traits de son visage, son teint et ses caractéristiques distinctives, mais réinterprète-les sous la forme d'une caricature 3D audacieuse.
+Appliquez une déformation forte et intentionnelle, notamment un cou allongé, un rapport tête-cou surdimensionné, des paupières tombantes, des lèvres épaisses et une asymétrie faciale subtile. Le personnage doit rester humain tout en étant clairement stylisé et expressif.
+Utilisez une finition de surface propre et contrôlée avec une peau lisse de qualité studio. Évitez les textures aléatoires, les imperfections, les taches de rousseur, la saleté, le grain, les mouchetures ou le bruit. Les matériaux doivent paraître polis, haut de gamme et soigneusement conçus, avec une diffusion subtile sous la surface et un ombrage réaliste de la peau.
+Habillez le personnage avec des vêtements de luxe et des accessoires audacieux et haut de gamme, créant ainsi une esthétique étrange, avant-gardiste et collectionnable qui semble dictée par le personnage plutôt que mignonne ou réaliste.
+Éclairez la scène avec un éclairage de studio neutre, des ombres douces et diffuses, et un éclairage uniforme sans contraste marqué. Utilisez un fond gris neutre uni ou blanc cassé.
+Effectuez le rendu en qualité 4K ultra haute définition avec des détails extrêmes, une mise au point nette et une clarté cinématographique. Incluez des détails de micro-surface, des textures haute résolution, un rendu physique (PBR), un éclairage global, des reflets doux et une définition raffinée des matériaux. L'image doit être nette, propre et sans bruit, avec une qualité de rendu professionnelle en studio.
+Pas de texte, de logos ou de filigranes.
+Format d'image : 2:3.</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>
+        </main>
+    </div>
+
+    <div id="promptModal" class="modal">
+        <div class="modal-container">
+            <span class="modal-close">&times;</span>
+            <img id="modalImg" src="" class="modal-img">
+            <div class="modal-body">
+                <h2 id="modalTitle"></h2>
+                <div id="modalDescription"></div>
+                <button id="modalCopyBtn" class="btn-copy">Copier le prompt complet</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 PromptNouchi - Library. Accessible hors-ligne.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

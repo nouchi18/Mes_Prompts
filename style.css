@@ -117,6 +117,7 @@ footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
     
     .modal-container {
         margin: 5vh 5vh; /* Remonte la modale pour gagner de l'espace */
+        max-width: 700px; margin: 5vh auto; border-radius: 20px; 
         max-height: 80vh; overflow-y: auto; border: 1px solid var(--border-color);
     }
 }

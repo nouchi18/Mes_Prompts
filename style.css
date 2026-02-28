@@ -116,6 +116,6 @@ footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
     }
     
     .modal-container {
-        margin: 10vh auto; /* Remonte la modale pour gagner de l'espace */
+        margin: 10vh 10vh; /* Remonte la modale pour gagner de l'espace */
     }
 }

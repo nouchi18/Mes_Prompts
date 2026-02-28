@@ -109,3 +109,14 @@ header {
 #modalDescription { color: var(--text-secondary); margin-bottom: 2rem; white-space: pre-wrap; }
 
 footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
+
+@media screen and (max-height: 700px) {
+    .modal-img {
+        max-height: 200px; /* Réduit l'image si l'écran est petit en hauteur */
+    }
+    
+    .modal-container {
+        margin: 2vh auto; /* Remonte la modale pour gagner de l'espace */
+    }
+}
+

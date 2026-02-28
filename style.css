@@ -109,3 +109,13 @@ header {
 #modalDescription { color: var(--text-secondary); margin-bottom: 2rem; white-space: pre-wrap; }
 
 footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
+
+@media (max-height: 800px) {
+    .modal-img {
+        max-height: 250px; /* On réduit l'image pour remonter le bouton */
+    }
+    .modal-container {
+        margin: 2vh auto; /* On réduit la marge haute */
+        max-height: 96vh;
+    }
+}

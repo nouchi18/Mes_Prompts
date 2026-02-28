@@ -91,13 +91,13 @@ header {
 /* Modale */
 .modal { 
     display: none; position: fixed; z-index: 2000; 
-    left: 0; top: 0; width: 100%; height: 80%; 
+    left: 0; top: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
 }
 .modal-container { 
     position: relative; background: var(--surface-color); 
     max-width: 700px; margin: 5vh auto; border-radius: 20px; 
-    max-height: 60vh; overflow-y: auto; border: 1px solid var(--border-color);
+    max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color);
 }
 .modal-close { 
     position: absolute; right: 20px; top: 15px; font-size: 2rem; 

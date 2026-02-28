@@ -112,11 +112,11 @@ footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
 
 @media screen and (max-height: 700px) {
     .modal-img {
-        max-height: 100px; /* Réduit l'image si l'écran est petit en hauteur */
+        max-height: 200px; /* Réduit l'image si l'écran est petit en hauteur */
     }
     
     .modal-container {
         margin: 5vh 5vh; /* Remonte la modale pour gagner de l'espace */
-        max-height: 50vh; overflow-y: auto; border: 1px solid var(--border-color);
+        max-height: 70vh; overflow-y: auto; border: 1px solid var(--border-color);
     }
 }

@@ -90,7 +90,7 @@ header {
      - 1s : durée totale (ajustez pour plus de vitesse)
      - ease-in-out : pour un mouvement fluide
   */
-  animation: flipRotation 2s ease-in-out;
+  animation: flipRotation 1s ease-in-out;
   
   /* Optionnel : améliore le rendu 3D pendant que ça tourne */
   backface-visibility: hidden;

@@ -60,21 +60,6 @@ header {
     gap: 2rem; 
 }
 
-/* 1. Définition de l'animation de rotation horizontale (Flip) */
-@keyframes flipRotation {
-  0% {
-    transform: perspective(1000px) rotateY(0deg);
-  }
-  50% {
-    /* Fait 3 tours complets (3 x 360 = 1080) */
-    transform: perspective(1000px) rotateY(360deg);
-  }
-  100% {
-    /* Revient à la position initiale */
-    transform: perspective(1000px) rotateY(0deg);
-  }
-}
-
 .card-container:hover .card {
   /* Seule la carte interne tourne */
   animation: flipRotation 1s ease-in-out forwards;

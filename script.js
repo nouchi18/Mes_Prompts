@@ -6,19 +6,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModal = document.querySelector('.modal-close');
     const modalCopyBtn = document.getElementById('modalCopyBtn');
 
-    // --- 1. FILTRAGE ---
+    // --- 1. FILTRAGE (Gère plusieurs styles) ---
     styleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const filter = btn.getAttribute('data-filter');
             
+            // Mise à jour de l'apparence des boutons de filtre
             styleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
             let visibleCount = 0;
 
             cards.forEach(card => {
-                const style = card.getAttribute('data-style');
-                if (filter === 'all' || style === filter) {
+                // On récupère la chaîne data-style (ex: "portrait cinematic")
+                const cardStylesRaw = card.getAttribute('data-style') || "";
+                
+                // On la transforme en tableau : ["portrait", "cinematic"]
+                const cardStylesArray = cardStylesRaw.split(' ');
+
+                // La carte est affichée si le filtre est "all" 
+                // OU si le tableau de styles contient le filtre sélectionné
+                if (filter === 'all' || cardStylesArray.includes(filter)) {
                     card.style.display = 'block';
                     visibleCount++;
                 } else {
@@ -30,57 +38,68 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 2. MODALE ---
+    // --- 2. GESTION DE LA MODALE ---
     cards.forEach(card => {
         card.addEventListener('click', (e) => {
-            // Ne pas ouvrir la modale si on clique sur le bouton "Copier"
+            // Ne pas ouvrir la modale si on clique spécifiquement sur le bouton "Copier" de la carte
             if (e.target.classList.contains('btn-copy')) return;
 
-            const imgSrc = card.querySelector('.card-img').src;
-            const title = card.querySelector('.card-header').innerText;
-            const fullText = card.querySelector('.full-prompt-hidden').innerText;
+            const imgElement = card.querySelector('.card-img');
+            const headerElement = card.querySelector('.card-header');
+            const hiddenPrompt = card.querySelector('.full-prompt-hidden');
 
-            document.getElementById('modalImg').src = imgSrc;
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalDescription').innerText = fullText;
+            if (imgElement && headerElement && hiddenPrompt) {
+                document.getElementById('modalImg').src = imgElement.src;
+                document.getElementById('modalTitle').innerText = headerElement.innerText;
+                document.getElementById('modalDescription').innerText = hiddenPrompt.innerText;
 
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+                modal.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Empêche le scroll en arrière-plan
+            }
         });
     });
 
+    // Fermeture de la modale
     const closeAllModals = () => {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
     };
 
-    closeModal.onclick = closeAllModals;
-    window.onclick = (e) => { if (e.target == modal) closeAllModals(); };
+    if (closeModal) {
+        closeModal.onclick = closeAllModals;
+    }
 
-    // --- 3. COPIE ---
+    window.onclick = (e) => { 
+        if (e.target == modal) closeAllModals(); 
+    };
+
+    // --- 3. SYSTÈME DE COPIE (Presse-papier) ---
     const handleCopy = (btnElement, text) => {
         navigator.clipboard.writeText(text).then(() => {
             const originalText = btnElement.innerText;
             btnElement.innerText = "✓ Copié !";
-            btnElement.style.background = "#10b981";
+            btnElement.style.background = "#10b981"; // Vert succès
 
             setTimeout(() => {
                 btnElement.innerText = originalText;
-                btnElement.style.background = "";
+                btnElement.style.background = ""; // Retour couleur originale
             }, 2000);
+        }).catch(err => {
+            console.error('Erreur lors de la copie : ', err);
         });
     };
 
-    // Boutons sur les cartes
+    // Gestion du clic sur les boutons "Copier" des cartes
     document.querySelectorAll('.btn-copy').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const text = btn.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
-            handleCopy(btn, text);
+            e.stopPropagation(); // Empêche l'ouverture de la modale
+            const cardContent = btn.closest('.card-content');
+            const fullText = cardContent.querySelector('.full-prompt-hidden').innerText;
+            handleCopy(btn, fullText);
         });
     });
 
-    // Bouton dans la modale
+    // Gestion du clic sur le bouton "Copier" à l'intérieur de la modale
     if (modalCopyBtn) {
         modalCopyBtn.addEventListener('click', () => {
             const text = document.getElementById('modalDescription').innerText;

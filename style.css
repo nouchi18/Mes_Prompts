@@ -1,134 +1,123 @@
-/* --- VARIABLES & BASE --- */
-        :root {
-            --primary: #007bff;
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
-            --text: #333;
-        }
+:root {
+    --bg-color: #0f1115;
+    --surface-color: #1a1d24;
+    --surface-hover: #242830;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --accent-color: #8b5cf6;
+    --accent-hover: #7c3aed;
+    --border-color: #334155;
+    --success-color: #10b981;
+}
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 20px;
-        }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+body { 
+    background-color: var(--bg-color); 
+    color: var(--text-primary); 
+    line-height: 1.6;
+}
 
-        /* --- FILTRES --- */
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
+header { 
+    padding: 1rem 5%; 
+    border-bottom: 1px solid var(--border-color); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    position: sticky; top: 0; 
+    background: rgba(15, 17, 21, 0.95); 
+    backdrop-filter: blur(10px); 
+    z-index: 1000;
+}
 
-        .filter-btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 25px;
-            background: #ddd;
-            cursor: pointer;
-            transition: 0.3s;
-            font-weight: bold;
-        }
+.logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: white; }
+.logo span { color: var(--accent-color); }
 
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--primary);
-            color: white;
-        }
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 
-        /* --- GRILLE DE CARTES (FLEXBOX) --- */
-        #cards-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 25px;
-            max-width: 1200px;
-            margin: 0 auto;
-            /* Perspective globale pour un effet 3D cohérent */
-            perspective: 1500px;
-        }
+.hero { text-align: center; padding: 2rem 0; }
+.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
 
-        /* --- LA CARTE --- */
-        .card {
-            width: 300px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: box-shadow 0.3s ease;
-            transform-style: preserve-3d;
-            display: flex;
-            flex-direction: column;
-        }
+/* Filtres */
+.styles-grid { display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 10px; }
+.style-card { 
+    background: var(--surface-color); 
+    border: 1px solid var(--border-color); 
+    padding: 0.8rem 1.5rem; 
+    border-radius: 50px; 
+    cursor: pointer; 
+    transition: 0.3s;
+    display: flex; align-items: center; gap: 10px;
+    white-space: nowrap;
+}
+.style-card.active { background: var(--accent-color); border-color: var(--accent-color); }
+.style-icon { font-weight: bold; opacity: 0.7; }
 
-        /* --- L'ANIMATION DEMANDÉE (FLIP) --- */
-        .card:hover {
-            animation: flipRotation 0.8s ease-in-out forwards;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            z-index: 10;
-        }
+/* Grille */
+.prompts-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 2rem; 
+}
 
-        @keyframes flipRotation {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
-        }
+.card { 
+    background: var(--surface-color); 
+    border-radius: 15px; 
+    overflow: hidden; 
+    border: 1px solid var(--border-color); 
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    cursor: pointer;
+}
+.card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
 
-        /* GESTION DU FILTRAGE : Les cartes cachées disparaissent du flux */
-        .card.hidden {
-            display: none;
-        }
+.card-img { width: 100%; height: 220px; object-fit: cover; }
+.card-content { padding: 1.5rem; }
+.card-header { color: var(--accent-color); font-weight: bold; font-size: 0.8rem; margin-bottom: 0.5rem; }
 
-        /* --- CONTENU DE LA CARTE --- */
-        .card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
+.prompt-text { 
+    color: var(--text-secondary);
+    font-size: 0.9rem; 
+    margin-bottom: 1.5rem; 
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; 
+    overflow: hidden; 
+}
 
-        .card-body {
-            padding: 20px;
-            flex-grow: 1;
-        }
+.btn-copy { 
+    width: 100%; background: var(--accent-color); color: white; border: none; 
+    padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;
+}
+.btn-copy:hover { background: var(--accent-hover); }
 
-        .category-tag {
-            font-size: 0.7rem;
-            color: var(--primary);
-            text-transform: uppercase;
-            font-weight: bold;
-            margin-bottom: 5px;
-            display: block;
-        }
+/* Modale */
+.modal { 
+    display: none; position: fixed; z-index: 2000; 
+    left: 0; top: 0; width: 100%; height: 80%; 
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+}
+.modal-container { 
+    position: relative; background: var(--surface-color); 
+    max-width: 700px; margin: 5vh auto; border-radius: 20px; 
+    max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color);
+}
+.modal-close { 
+    position: absolute; right: 20px; top: 15px; font-size: 2rem; 
+    color: white; cursor: pointer; z-index: 10;
+}
+.modal-img { width: 100%; max-height: 450px; object-fit: contain; display: block; }
+.modal-body { padding: 2rem; }
+.modal-body h2 { margin-bottom: 1rem; }
+#modalDescription { color: var(--text-secondary); margin-bottom: 2rem; white-space: pre-wrap; }
 
-        .card-title {
-            margin: 0 0 15px 0;
-            font-size: 1.1rem;
-        }
+footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
 
-        .copy-btn {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #eee;
-            background: #f9f9f9;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-weight: 500;
-        }
-
-        .copy-btn:hover {
-            background: #eef6ff;
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        .copy-btn.success {
-            background: #28a745;
-            color: white;
-            border-color: #28a745;
-        }
+@media screen and (max-height: 700px) {
+    .modal-img {
+        max-height: 400px; /* Réduit l'image si l'écran est petit en hauteur */
+    }
+    
+    .modal-container {
+        margin: 5vh 5vh; /* Remonte la modale pour gagner de l'espace */
+        max-width: 700px; margin: 5vh auto; border-radius: 20px; 
+        max-height: 80vh; overflow-y: auto; border: 1px solid var(--border-color);
+    }
+}

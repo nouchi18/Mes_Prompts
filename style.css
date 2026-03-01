@@ -60,6 +60,21 @@ header {
     gap: 2rem; 
 }
 
+/* 1. Définition de l'animation du tourbillon */
+@keyframes tourbillon {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    /* La carte s'éloigne un peu et tourne vite (3 tours = 1080deg) */
+    transform: scale(0.8) rotate(1080deg);
+  }
+  100% {
+    /* Retour à la taille et position normale */
+    transform: scale(1) rotate(0deg);
+  }
+}
+
 .card { 
     background: var(--surface-color); 
     border-radius: 15px; 
@@ -68,7 +83,17 @@ header {
     transition: transform 0.3s ease, opacity 0.3s ease;
     cursor: pointer;
 }
-.card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+/* 2. Application de l'animation sur la carte au survol */
+.card:hover {
+  /* - tourbillon : nom de l'animation
+     - 0.8s : durée de l'action (plus c'est court, plus c'est rapide)
+     - ease-in-out : accélération au début et ralentissement à la fin
+  */
+  animation: tourbillon 0.8s ease-in-out;
+  
+  /* Optionnel : on s'assure que la carte passe au-dessus des autres pendant l'animation */
+  z-index: 10;
+}
 
 .card-img { width: 100%; height: 220px; object-fit: cover; }
 .card-content { padding: 1.5rem; }
@@ -109,6 +134,8 @@ header {
 #modalDescription { color: var(--text-secondary); margin-bottom: 2rem; white-space: pre-wrap; }
 
 footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
+
+
 
 @media screen and (max-height: 700px) {
     .modal-img {

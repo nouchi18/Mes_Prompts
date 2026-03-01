@@ -91,6 +91,8 @@ header {
      - ease-in-out : pour un mouvement fluide
   */
   animation: flipRotation 1s ease-in-out;
+
+  pointer-events: auto;
   
   /* Optionnel : améliore le rendu 3D pendant que ça tourne */
   backface-visibility: hidden;

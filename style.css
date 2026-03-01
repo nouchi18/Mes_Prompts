@@ -67,7 +67,7 @@ header {
   }
   50% {
     /* Fait 3 tours complets (3 x 360 = 1080) */
-    transform: perspective(1000px) rotateY(180deg);
+    transform: perspective(1000px) rotateY(360deg);
   }
   100% {
     /* Revient à la position initiale */

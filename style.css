@@ -10,7 +10,12 @@
     --success-color: #10b981;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Inter', sans-serif; 
+}
 
 body { 
     background-color: var(--bg-color); 
@@ -24,8 +29,9 @@ header {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
-    position: sticky; top: 0; 
-    background: rgba(15, 17, 21, 0.95); 
+    position: sticky; 
+    top: 0; 
+    background: rgba(15, 21, 21, 0.95); 
     backdrop-filter: blur(10px); 
     z-index: 1000;
 }
@@ -39,7 +45,14 @@ header {
 .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
 
 /* Filtres */
-.styles-grid { display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 10px; }
+.styles-grid { 
+    display: flex; 
+    gap: 1rem; 
+    margin-bottom: 2rem; 
+    overflow-x: auto; 
+    padding-bottom: 10px; 
+}
+
 .style-card { 
     background: var(--surface-color); 
     border: 1px solid var(--border-color); 
@@ -47,13 +60,18 @@ header {
     border-radius: 50px; 
     cursor: pointer; 
     transition: 0.3s;
-    display: flex; align-items: center; gap: 10px;
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
     white-space: nowrap;
 }
-.style-card.active { background: var(--accent-color); border-color: var(--accent-color); }
-.style-icon { font-weight: bold; opacity: 0.7; }
 
-/* Grille */
+.style-card.active { 
+    background: var(--accent-color); 
+    border-color: var(--accent-color); 
+}
+
+/* Grille et Cards */
 .prompts-grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
@@ -65,10 +83,20 @@ header {
     border-radius: 15px; 
     overflow: hidden; 
     border: 1px solid var(--border-color); 
-    transition: transform 0.3s ease, opacity 0.3s ease;
+    /* Transition "all" pour inclure le box-shadow en douceur */
+    transition: all 0.3s ease;
     cursor: pointer;
+    position: relative;
 }
-.card:hover { transform: translateY(-5px); border-color: var(--accent-color); }
+
+/* EFFET HOVER AVEC HALO DIFFUS */
+.card:hover { 
+    transform: translateY(-8px); 
+    border-color: var(--accent-color);
+    /* Halo diffus : une ombre douce et une ombre plus large */
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), 
+                0 0 40px rgba(139, 92, 246, 0.15); 
+}
 
 .card-img { width: 100%; height: 220px; object-fit: cover; }
 .card-content { padding: 1.5rem; }
@@ -78,46 +106,68 @@ header {
     color: var(--text-secondary);
     font-size: 0.9rem; 
     margin-bottom: 1.5rem; 
-    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; 
+    display: -webkit-box; 
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical; 
     overflow: hidden; 
 }
 
 .btn-copy { 
-    width: 100%; background: var(--accent-color); color: white; border: none; 
-    padding: 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s;
+    width: 100%; 
+    background: var(--accent-color); 
+    color: white; 
+    border: none; 
+    padding: 0.8rem; 
+    border-radius: 8px; 
+    font-weight: 600; 
+    cursor: pointer; 
+    transition: 0.3s;
 }
+
 .btn-copy:hover { background: var(--accent-hover); }
 
 /* Modale */
 .modal { 
-    display: none; position: fixed; z-index: 2000; 
-    left: 0; top: 0; width: 100%; height: 80%; 
-    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    display: none; 
+    position: fixed; 
+    z-index: 2000; 
+    left: 0; 
+    top: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(0,0,0,0.85); 
+    backdrop-filter: blur(8px);
 }
+
 .modal-container { 
-    position: relative; background: var(--surface-color); 
-    max-width: 700px; margin: 5vh auto; border-radius: 20px; 
-    max-height: 90vh; overflow-y: auto; border: 1px solid var(--border-color);
+    position: relative; 
+    background: var(--surface-color); 
+    max-width: 700px; 
+    margin: 5vh auto; 
+    border-radius: 20px; 
+    max-height: 90vh; 
+    overflow-y: auto; 
+    border: 1px solid var(--border-color);
 }
+
 .modal-close { 
-    position: absolute; right: 20px; top: 15px; font-size: 2rem; 
-    color: white; cursor: pointer; z-index: 10;
+    position: absolute; 
+    right: 20px; 
+    top: 15px; 
+    font-size: 2rem; 
+    color: white; 
+    cursor: pointer; 
+    z-index: 10;
 }
+
 .modal-img { width: 100%; max-height: 450px; object-fit: contain; display: block; }
 .modal-body { padding: 2rem; }
-.modal-body h2 { margin-bottom: 1rem; }
 #modalDescription { color: var(--text-secondary); margin-bottom: 2rem; white-space: pre-wrap; }
 
 footer { text-align: center; padding: 3rem; color: var(--text-secondary); }
 
+/* Responsive */
 @media screen and (max-height: 700px) {
-    .modal-img {
-        max-height: 400px; /* Réduit l'image si l'écran est petit en hauteur */
-    }
-    
-    .modal-container {
-        margin: 5vh 5vh; /* Remonte la modale pour gagner de l'espace */
-        max-width: 700px; margin: 5vh auto; border-radius: 20px; 
-        max-height: 80vh; overflow-y: auto; border: 1px solid var(--border-color);
-    }
+    .modal-img { max-height: 350px; }
+    .modal-container { margin: 2vh auto; }
 }

@@ -94,8 +94,8 @@ header {
     transform: translateY(-8px); 
     border-color: var(--accent-color);
     /* Halo diffus : une ombre douce et une ombre plus large */
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.5), 
-                0 0 40px rgba(139, 92, 246, 0.75); 
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.75), 
+                0 0 40px rgba(139, 92, 246, 1.00); 
 }
 
 .card-img { width: 100%; height: 220px; object-fit: cover; }

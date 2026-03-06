@@ -92,7 +92,7 @@ header {
 
 /* EFFET HOVER AVEC HALO DORÉ */
 .card:hover { 
-    transform: translateY(-8px); 
+    transform: translateY(-25px); 
     border-color: var(--accent-color);
     /* Halo diffus aux teintes dorées */
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.75), 

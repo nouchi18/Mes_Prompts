@@ -210,6 +210,28 @@ Format d'image : 2:3.</div>
         </main>
     </div>
 
+    <button id="openAdmin" class="btn-admin-float">+</button>
+
+    <div id="adminPanel" class="modal">
+        <div class="modal-container admin-mode">
+            <span class="modal-close" id="closeAdmin">&times;</span>
+            <div class="modal-body">
+                <h2>Ajouter un Prompt</h2>
+                <div class="admin-form">
+                    <input type="text" id="newTitle" placeholder="Titre (ex: PORTRAIT)">
+                    <input type="text" id="newStyles" placeholder="Styles (ex: portraits 3d)">
+                    <input type="text" id="newImg" placeholder="Lien image (ex: Images/photo.png)">
+                    <textarea id="newPrompt" placeholder="Collez le texte du prompt ici..." rows="5"></textarea>
+                    <button id="savePrompt" class="btn-copy">Générer la carte</button>
+                </div>
+                <div id="generatedCodeSection" style="display:none; margin-top: 20px;">
+                    <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 5px;">Copie ce code et colle-le dans ton index.html :</p>
+                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="promptModal" class="modal">
         <div class="modal-container">
             <span class="modal-close">&times;</span>

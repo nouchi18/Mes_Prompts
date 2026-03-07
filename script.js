@@ -1,115 +1,121 @@
 document.addEventListener("DOMContentLoaded", () => {
     const styleButtons = document.querySelectorAll('.style-card');
-    const cards = document.querySelectorAll('.card');
+    const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const modal = document.getElementById('promptModal');
-    const closeModal = document.querySelector('.modal-close');
-    const modalCopyBtn = document.getElementById('modalCopyBtn');
+    const adminPanel = document.getElementById('adminPanel');
 
-    // --- 1. GÉNÉRATION AUTOMATIQUE DES APERÇUS (PROMPT-TEXT) ---
-    // Cette section extrait le début du "full-prompt-hidden" pour l'afficher sur la carte
-    cards.forEach(card => {
-        const fullPromptElement = card.querySelector('.full-prompt-hidden');
-        const previewElement = card.querySelector('.prompt-text');
+    // --- 1. MISE À JOUR DES APERÇUS ET COMPTEUR ---
+    const updateUI = () => {
+        const allCards = document.querySelectorAll('.card');
+        let visibleCount = 0;
 
-        if (fullPromptElement && previewElement) {
-            const fullText = fullPromptElement.innerText.trim();
-            const limit = 120; // Nombre de caractères maximum pour l'aperçu
+        allCards.forEach(card => {
+            // Générer l'aperçu texte s'il est vide
+            const fullPrompt = card.querySelector('.full-prompt-hidden');
+            const preview = card.querySelector('.prompt-text');
+            if (fullPrompt && preview) {
+                const text = fullPrompt.innerText.trim();
+                preview.innerText = text.length > 120 ? text.substring(0, 120) + "..." : text;
+            }
             
-            const previewText = fullText.length > limit 
-                ? fullText.substring(0, limit) + "..." 
-                : fullText;
-            
-            previewElement.innerText = previewText;
-        }
-    });
+            if (card.style.display !== 'none') visibleCount++;
+        });
+        
+        if (counter) counter.innerText = `${visibleCount} Prompt(s) affiché(s)`;
+    };
 
-    // --- 2. FILTRAGE (Gère plusieurs styles) ---
+    // --- 2. FILTRAGE ---
     styleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
             const filter = btn.getAttribute('data-filter');
-            
             styleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
 
-            let visibleCount = 0;
-
-            cards.forEach(card => {
-                const cardStylesRaw = card.getAttribute('data-style') || "";
-                const cardStylesArray = cardStylesRaw.split(' ');
-
-                if (filter === 'all' || cardStylesArray.includes(filter)) {
+            document.querySelectorAll('.card').forEach(card => {
+                const cardStyles = (card.getAttribute('data-style') || "").split(' ');
+                if (filter === 'all' || cardStyles.includes(filter)) {
                     card.style.display = 'block';
-                    visibleCount++;
                 } else {
                     card.style.display = 'none';
                 }
             });
-            
-            if (counter) counter.innerText = `${visibleCount} Prompt(s) affiché(s)`;
+            updateUI();
         });
     });
 
-    // --- 3. GESTION DE LA MODALE ---
-    cards.forEach(card => {
-        card.addEventListener('click', (e) => {
-            // Ne pas ouvrir la modale si on clique sur le bouton "Copier"
-            if (e.target.classList.contains('btn-copy')) return;
+    // --- 3. MODALES (LECTURE & FERMETURE) ---
+    document.addEventListener('click', (e) => {
+        // Ouvrir modale de lecture
+        const card = e.target.closest('.card');
+        if (card && !e.target.classList.contains('btn-copy')) {
+            document.getElementById('modalImg').src = card.querySelector('.card-img').src;
+            document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
+            document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
 
-            const imgElement = card.querySelector('.card-img');
-            const headerElement = card.querySelector('.card-header');
-            const hiddenPrompt = card.querySelector('.full-prompt-hidden');
+        // Fermer les modales
+        if (e.target.classList.contains('modal-close') || e.target === modal || e.target === adminPanel) {
+            modal.style.display = 'none';
+            adminPanel.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
 
-            if (imgElement && headerElement && hiddenPrompt) {
-                document.getElementById('modalImg').src = imgElement.src;
-                document.getElementById('modalTitle').innerText = headerElement.innerText;
-                document.getElementById('modalDescription').innerText = hiddenPrompt.innerText;
+    // --- 4. ADMINISTRATION (AJOUT) ---
+    document.getElementById('openAdmin').onclick = () => adminPanel.style.display = 'block';
+    
+    document.getElementById('savePrompt').addEventListener('click', () => {
+        const title = document.getElementById('newTitle').value.toUpperCase() || "PORTRAIT";
+        const styles = document.getElementById('newStyles').value.toLowerCase();
+        const img = document.getElementById('newImg').value || "Images/placeholder.png";
+        const prompt = document.getElementById('newPrompt').value;
 
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden'; // Bloque le scroll
+        if (!prompt) return alert("Veuillez coller un prompt !");
+
+        const cardHTML = `
+            <article class="card" data-style="${styles}">
+                <img src="${img}" class="card-img" alt="${title}">
+                <div class="card-content">
+                    <div class="card-header">${title}</div>
+                    <p class="prompt-text"></p>
+                    <div class="full-prompt-hidden" style="display:none;">${prompt}</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            </article>`.replace(/^\s+/gm, '');
+
+        grid.insertAdjacentHTML('afterbegin', cardHTML);
+        document.getElementById('generatedCodeSection').style.display = 'block';
+        document.getElementById('generatedCode').value = cardHTML;
+        
+        updateUI();
+        alert("Carte ajoutée temporairement ! Copiez le code généré pour le coller dans index.html.");
+    });
+
+    // --- 5. COPIE ---
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('btn-copy')) {
+            let text = "";
+            if (e.target.id === 'modalCopyBtn') {
+                text = document.getElementById('modalDescription').innerText;
+            } else {
+                text = e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             }
-        });
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const original = e.target.innerText;
+                e.target.innerText = "✓ Copié !";
+                e.target.style.background = "#10b981";
+                setTimeout(() => {
+                    e.target.innerText = original;
+                    e.target.style.background = "";
+                }, 2000);
+            });
+        }
     });
 
-    const closeAllModals = () => {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-    };
-
-    if (closeModal) closeModal.onclick = closeAllModals;
-    window.onclick = (e) => { if (e.target == modal) closeAllModals(); };
-
-    // --- 4. SYSTÈME DE COPIE ---
-    const handleCopy = (btnElement, text) => {
-        navigator.clipboard.writeText(text).then(() => {
-            const originalText = btnElement.innerText;
-            btnElement.innerText = "✓ Copié !";
-            btnElement.style.background = "#10b981"; // Vert succès
-
-            setTimeout(() => {
-                btnElement.innerText = originalText;
-                btnElement.style.background = ""; 
-            }, 2000);
-        }).catch(err => {
-            console.error('Erreur lors de la copie : ', err);
-        });
-    };
-
-    // Boutons des cartes
-    document.querySelectorAll('.btn-copy').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); 
-            const cardContent = btn.closest('.card-content');
-            const fullText = cardContent.querySelector('.full-prompt-hidden').innerText;
-            handleCopy(btn, fullText);
-        });
-    });
-
-    // Bouton de la modale
-    if (modalCopyBtn) {
-        modalCopyBtn.addEventListener('click', () => {
-            const text = document.getElementById('modalDescription').innerText;
-            handleCopy(modalCopyBtn, text);
-        });
-    }
+    // Init au chargement
+    updateUI();
 });

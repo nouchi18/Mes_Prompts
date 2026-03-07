@@ -1,272 +1,63 @@
-/* 1. VARIABLES ET CONFIGURATION DE BASE */
 :root {
     --bg-color: #0f1115;
     --surface-color: #1a1d24;
-    --surface-hover: #242830;
     --text-primary: #ffffff;
     --text-secondary: #94a3b8;
-    --accent-color: #d4af37; /* Or */
+    --accent-color: #d4af37;
     --accent-hover: #f1c40f;
     --border-color: #334155;
-    --success-color: #10b981;
 }
 
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Inter', sans-serif; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; }
 
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-primary); 
-    line-height: 1.6;
-    overflow-x: hidden;
-}
-
-/* 2. HEADER & NAVIGATION */
+/* HEADER */
 header { 
-    padding: 1rem 5%; 
-    border-bottom: 1px solid var(--border-color); 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    position: sticky; 
-    top: 0; 
-    background: rgba(15, 17, 21, 0.95); 
-    backdrop-filter: blur(10px); 
-    z-index: 1000;
+    padding: 1rem 5%; border-bottom: 1px solid var(--border-color); 
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; background: rgba(15, 17, 21, 0.95); backdrop-filter: blur(10px); z-index: 1000;
 }
-
 .logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: white; }
 .logo span { color: var(--accent-color); }
+#counter { font-size: 0.9rem; color: var(--text-secondary); background: var(--surface-color); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border-color); }
 
-#counter {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    background: var(--surface-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    border: 1px solid var(--border-color);
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.hero { text-align: center; padding: 3rem 0; }
+.hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; background: linear-gradient(to right, #fff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 
-/* 3. LAYOUT CONTAINER */
-.container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    padding: 2rem; 
-}
+/* FILTRES */
+.styles-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-bottom: 3rem; }
+.style-card { background: var(--surface-color); border: 1px solid var(--border-color); padding: 0.6rem 1.4rem; border-radius: 50px; cursor: pointer; transition: 0.3s; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
+.style-icon { color: var(--accent-color); font-weight: 800; margin-right: 2px; }
+.style-card:hover { border-color: var(--accent-color); color: var(--text-primary); }
+.style-card.active { background: var(--accent-color); color: #000; transform: scale(1.05); }
+.style-card.active .style-icon { color: #000; }
 
-.hero { 
-    text-align: center; 
-    padding: 3rem 0; 
-}
+/* GRILLE & CARTES */
+.prompts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
+.card { background: var(--surface-color); border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); transition: 0.4s; cursor: pointer; display: flex; flex-direction: column; }
+.card:hover { transform: translateY(-10px); border-color: var(--accent-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.card-img { width: 100%; height: 250px; object-fit: contain; background: #000; }
+.card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+.card-header { color: var(--accent-color); font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 0.5rem; text-transform: uppercase; }
+.prompt-text { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; flex-grow: 1; }
+.btn-copy { width: 100%; background: var(--accent-color); color: #000; border: none; padding: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+.btn-copy:hover { background: var(--accent-hover); }
 
-.hero h1 { 
-    font-size: 2.5rem; 
-    margin-bottom: 0.5rem; 
-    background: linear-gradient(to right, #fff, var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* 4. SECTION FILTRES (MOT COMPLET, 1ÈRE LETTRE DORÉE) */
-.styles-section {
-    margin-bottom: 3rem;
-}
-
-.styles-grid { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 0.8rem; 
-    justify-content: center; 
-}
-
-.style-card { 
-    background: var(--surface-color); 
-    border: 1px solid var(--border-color); 
-    padding: 0.6rem 1.4rem; 
-    border-radius: 50px; 
-    cursor: pointer; 
-    transition: all 0.3s ease;
-    display: flex; 
-    align-items: center; 
-    gap: 0; /* Supprime l'espace entre l'icône et le texte */
-    white-space: nowrap;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.style-icon {
-    color: var(--accent-color); /* Première lettre en Or */
-    font-weight: 800;
-    font-size: 0.95rem;
-    display: inline-block;
-}
-
-.style-card:hover {
-    border-color: var(--accent-color);
-    color: var(--text-primary);
-}
-
-.style-card.active { 
-    background: var(--accent-color); 
-    border-color: var(--accent-color); 
-    color: #000; /* Le texte devient noir sur fond doré */
-    transform: scale(1.05);
-}
-
-/* Force la première lettre à devenir noire aussi quand le bouton est actif */
-.style-card.active .style-icon {
-    color: #000;
-}
-
-/* 5. GRILLE DE CARTES */
-.prompts-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-    gap: 2rem; 
-}
-
-.card { 
-    background: var(--surface-color); 
-    border-radius: 15px; 
-    overflow: hidden; 
-    border: 1px solid var(--border-color); 
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-}
-
-.card:hover { 
-    transform: translateY(-10px); 
-    border-color: var(--accent-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
-                0 0 20px rgba(212, 175, 55, 0.1); 
-}
-
-.card-img { 
-    width: 100%; 
-    height: 250px; /* Garde la hauteur réduite que tu souhaitais */
-    object-fit: contain; /* L'image sera redimensionnée pour tenir entièrement dans le cadre */
-    transition: 0.5s;
-    background-color: #000; /* Recommandé : ajoute un fond noir pour combler les bords vides */
-}
-
-.card-content { 
-    padding: 1.5rem; 
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-header { 
-    color: var(--accent-color); 
-    font-weight: 800; 
-    font-size: 0.75rem; 
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem; 
-    text-transform: uppercase;
-}
-
-.prompt-text { 
-    color: var(--text-secondary);
-    font-size: 0.9rem; 
-    margin-bottom: 1.5rem; 
-    display: -webkit-box; 
-    -webkit-line-clamp: 3; 
-    -webkit-box-orient: vertical; 
-    overflow: hidden; 
-    flex-grow: 1;
-}
-
-/* 6. BOUTONS COPIER */
-.btn-copy { 
-    width: 100%; 
-    background: var(--accent-color); 
-    color: #000; 
-    border: none; 
-    padding: 0.8rem; 
-    border-radius: 8px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: 0.3s;
-}
-
-.btn-copy:hover { 
-    background: var(--accent-hover); 
-}
-
-/* 7. MODALE */
-.modal { 
-    display: none; 
-    position: fixed; 
-    z-index: 2000; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.9); 
-    backdrop-filter: blur(12px);
-    padding: 20px;
-}
-
-.modal-container { 
-    position: relative; 
-    background: var(--surface-color); 
-    max-width: 800px; 
-    margin: 2vh auto; 
-    border-radius: 20px; 
-    max-height: 95vh; 
-    overflow-y: auto; 
-    border: 1px solid var(--border-color);
-}
-
-.modal-close { 
-    position: absolute; 
-    right: 20px; 
-    top: 15px; 
-    font-size: 2.5rem; 
-    color: white; 
-    cursor: pointer; 
-    z-index: 10;
-}
-
-.modal-img { 
-    width: 100%; 
-    max-height: 500px; 
-    object-fit: contain; 
-    display: block; 
-    background: #000;
-}
-
+/* MODALES */
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); padding: 20px; overflow-y: auto; }
+.modal-container { position: relative; background: var(--surface-color); max-width: 800px; margin: 2vh auto; border-radius: 20px; border: 1px solid var(--border-color); }
+.modal-close { position: absolute; right: 20px; top: 15px; font-size: 2.5rem; color: white; cursor: pointer; z-index: 10; }
+.modal-img { width: 100%; max-height: 500px; object-fit: contain; background: #000; }
 .modal-body { padding: 2.5rem; }
-.modal-body h2 { margin-bottom: 1rem; color: var(--accent-color); }
+#modalDescription { white-space: pre-wrap; color: var(--text-secondary); margin-bottom: 2rem; }
 
-#modalDescription { 
-    color: var(--text-secondary); 
-    margin-bottom: 2rem; 
-    white-space: pre-wrap; 
-    font-size: 1rem;
-    line-height: 1.8;
-}
+/* ADMIN UI */
+.btn-admin-float { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: var(--accent-color); border: none; font-size: 2rem; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1500; transition: 0.3s; }
+.btn-admin-float:hover { transform: scale(1.1) rotate(90deg); }
+.admin-mode { max-width: 500px; }
+.admin-form { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+.admin-form input, .admin-form textarea { background: var(--bg-color); border: 1px solid var(--border-color); color: white; padding: 12px; border-radius: 8px; width: 100%; }
+#generatedCode { width: 100%; height: 100px; background: #000; color: #10b981; font-family: monospace; font-size: 0.75rem; margin-top: 10px; padding: 10px; border: 1px dashed var(--accent-color); }
 
-/* 8. FOOTER */
-footer { 
-    text-align: center; 
-    padding: 4rem 2rem; 
-    color: var(--text-secondary); 
-    border-top: 1px solid var(--border-color);
-    margin-top: 4rem;
-}
-
-/* 9. RESPONSIVE */
-@media (max-width: 768px) {
-    .container { padding: 1rem; }
-    .hero h1 { font-size: 1.8rem; }
-    .prompts-grid { grid-template-columns: 1fr; }
-    .modal-container { margin: 0; max-height: 100vh; border-radius: 0; }
-}
+footer { text-align: center; padding: 4rem 2rem; color: var(--text-secondary); border-top: 1px solid var(--border-color); margin-top: 4rem; }

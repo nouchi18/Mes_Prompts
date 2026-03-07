@@ -27,7 +27,7 @@ header {
 
 /* FILTRES */
 .styles-grid { display: flex; flex-wrap: wrap; gap: 0.8rem; justify-content: center; margin-bottom: 3rem; }
-.style-card { background: var(--surface-color); border: 1px solid var(--border-color); padding: 0.6rem 0.6rem; border-radius: 50px; cursor: pointer; transition: 0.3s; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
+.style-card { background: var(--surface-color); border: 1px solid var(--border-color); padding: 0.6rem 1.4rem; border-radius: 50px; cursor: pointer; transition: 0.3s; color: var(--text-secondary); font-size: 0.85rem; font-weight: 600; }
 .style-icon { color: var(--accent-color); font-weight: 800; margin-right: 2px; }
 .style-card:hover { border-color: var(--accent-color); color: var(--text-primary); }
 .style-card.active { background: var(--accent-color); color: #000; transform: scale(1.05); }

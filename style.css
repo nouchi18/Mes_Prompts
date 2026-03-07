@@ -37,7 +37,7 @@ header {
 .prompts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
 .card { background: var(--surface-color); border-radius: 15px; overflow: hidden; border: 1px solid var(--border-color); transition: 0.4s; cursor: pointer; display: flex; flex-direction: column; }
 .card:hover { transform: translateY(-10px); border-color: var(--accent-color); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.card-img { width: 250px; height: 250px; object-fit: contain; background: #000; }
+.card-img { width: 100%; height: 250px; object-fit: contain; background: #000; }
 .card-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
 .card-header { color: var(--accent-color); font-weight: 800; font-size: 0.75rem; letter-spacing: 1px; margin-bottom: 0.5rem; text-transform: uppercase; }
 .prompt-text { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem; flex-grow: 1; }

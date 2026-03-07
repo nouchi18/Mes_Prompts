@@ -71,7 +71,7 @@ header {
     -webkit-text-fill-color: transparent;
 }
 
-/* 4. SECTION FILTRES (ICÔNE DORÉE ET COLLÉE) */
+/* 4. SECTION FILTRES (MOT COMPLET, 1ÈRE LETTRE DORÉE) */
 .styles-section {
     margin-bottom: 3rem;
 }
@@ -86,26 +86,24 @@ header {
 .style-card { 
     background: var(--surface-color); 
     border: 1px solid var(--border-color); 
-    padding: 0.6rem 1.2rem; 
+    padding: 0.6rem 1.4rem; 
     border-radius: 50px; 
     cursor: pointer; 
     transition: all 0.3s ease;
     display: flex; 
     align-items: center; 
-    gap: 4px; /* Espace réduit pour "coller" l'icône au texte */
+    gap: 0; /* Supprime l'espace entre l'icône et le texte */
     white-space: nowrap;
     color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-weight: 600;
 }
 
 .style-icon {
-    color: var(--accent-color); /* Couleur dorée pour l'icône */
+    color: var(--accent-color); /* Première lettre en Or */
     font-weight: 800;
-    font-size: 0.9rem;
-}
-
-.style-card h4 {
-    font-size: 0.85rem;
-    font-weight: 600;
+    font-size: 0.95rem;
+    display: inline-block;
 }
 
 .style-card:hover {
@@ -116,11 +114,11 @@ header {
 .style-card.active { 
     background: var(--accent-color); 
     border-color: var(--accent-color); 
-    color: #000; 
+    color: #000; /* Le texte devient noir sur fond doré */
     transform: scale(1.05);
 }
 
-/* Changement de couleur de l'icône quand le filtre est sélectionné (noir sur fond or) */
+/* Force la première lettre à devenir noire aussi quand le bouton est actif */
 .style-card.active .style-icon {
     color: #000;
 }
@@ -146,7 +144,8 @@ header {
 .card:hover { 
     transform: translateY(-10px); 
     border-color: var(--accent-color);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.1); 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 
+                0 0 20px rgba(212, 175, 55, 0.1); 
 }
 
 .card-img { 
@@ -183,7 +182,7 @@ header {
     flex-grow: 1;
 }
 
-/* 6. BOUTONS */
+/* 6. BOUTONS COPIER */
 .btn-copy { 
     width: 100%; 
     background: var(--accent-color); 
@@ -198,7 +197,6 @@ header {
 
 .btn-copy:hover { 
     background: var(--accent-hover); 
-    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
 }
 
 /* 7. MODALE */

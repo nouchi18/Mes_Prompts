@@ -5,11 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminPanel = document.getElementById('adminPanel');
     const genCodeArea = document.getElementById('generatedCode');
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
+    let currentEditingCard = null;
 
-    // --- 1. GÉNÉRATION DE LA GRILLE ---
+    // --- 1. GÉNÉRATION INITIALE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
-        promptDatabase.forEach((data, index) => {
+        promptDatabase.forEach((data) => {
             const card = document.createElement('article');
             card.className = 'card';
             card.setAttribute('data-style', data.styles);
@@ -27,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 2. EXPORT DATABASE (Génération du code complet) ---
+    // --- 2. EXPORT DATABASE (Génération du code) ---
     const generateNewDatabaseCode = () => {
         const currentData = [];
         document.querySelectorAll('.card').forEach(card => {
@@ -38,9 +39,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 prompt: card.querySelector('.full-prompt-hidden').innerText
             });
         });
-
         const code = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
         genCodeArea.value = code;
+        document.getElementById('generatedCodeSection').style.display = 'block';
         adminPanel.style.display = "block";
     };
 
@@ -53,14 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterLibrary = () => {
         const activeStyle = document.querySelector('.style-card.active').getAttribute('data-filter');
         const term = searchInput.value.toLowerCase();
-
         document.querySelectorAll('.card').forEach(card => {
             const styles = card.getAttribute('data-style').toLowerCase();
             const content = card.innerText.toLowerCase();
-            
             const matchesStyle = activeStyle === "all" || styles.includes(activeStyle);
             const matchesSearch = term === "" || content.includes(term);
-
             card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
         });
         updateStats();
@@ -91,18 +89,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!controls) {
                     controls = document.createElement('div');
                     controls.className = 'admin-controls';
+                    
+                    // BOUTON MODIFIER
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'btn-edit-card';
+                    editBtn.innerText = 'MODIFIER';
+                    editBtn.onclick = (ev) => {
+                        ev.stopPropagation();
+                        currentEditingCard = card;
+                        document.getElementById('adminModalTitle').innerText = "Modifier le Prompt";
+                        document.getElementById('adminTitle').value = card.querySelector('.card-header').innerText;
+                        document.getElementById('adminStyles').value = card.getAttribute('data-style');
+                        document.getElementById('adminImg').value = card.querySelector('.card-img').src;
+                        document.getElementById('adminPrompt').value = card.querySelector('.full-prompt-hidden').innerText;
+                        adminPanel.style.display = "block";
+                    };
+
+                    // BOUTON SUPPRIMER
                     const delBtn = document.createElement('button');
                     delBtn.className = 'btn-delete-card';
                     delBtn.innerText = 'SUPPRIMER';
                     delBtn.onclick = (ev) => {
                         ev.stopPropagation();
-                        if (confirm("Supprimer ce prompt ? Un code de mise à jour sera généré.")) {
+                        if (confirm("Supprimer ce prompt ?")) {
                             card.remove();
                             generateNewDatabaseCode();
                             updateStats();
                         }
                     };
-                    controls.appendChild(delBtn);
+
+                    controls.append(editBtn, delBtn);
                     card.appendChild(controls);
                 }
                 controls.style.display = "flex";
@@ -113,9 +129,28 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAdminModeBtn.style.display = show ? "flex" : "none";
     };
 
-    closeAdminModeBtn.onclick = () => toggleAdminUI(false);
+    // --- 5. SAUVEGARDE (AJOUT OU ÉDITION) ---
+    document.getElementById('btnSaveAction').onclick = () => {
+        const title = document.getElementById('adminTitle').value.toUpperCase();
+        const styles = document.getElementById('adminStyles').value.toLowerCase();
+        const img = document.getElementById('adminImg').value;
+        const promptText = document.getElementById('adminPrompt').value;
 
-    // --- 5. MODALES ET COPIE ---
+        if (currentEditingCard) {
+            currentEditingCard.querySelector('.card-header').innerText = title;
+            currentEditingCard.setAttribute('data-style', styles);
+            currentEditingCard.querySelector('.card-img').src = img;
+            currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
+            currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
+        } else {
+            const html = `<article class="card" data-style="${styles}"><img src="${img}" class="card-img"><div class="card-content"><div class="card-header">${title}</div><p class="prompt-text"></p><div class="full-prompt-hidden" style="display:none;">${promptText}</div><button class="btn-copy">Copier</button></div></article>`;
+            grid.insertAdjacentHTML('afterbegin', html);
+        }
+        generateNewDatabaseCode();
+        updateStats();
+    };
+
+    // --- 6. GESTION DES CLICS ---
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
@@ -124,28 +159,33 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             document.getElementById('promptModal').style.display = "block";
         }
-
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
                 e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
-            
             navigator.clipboard.writeText(text).then(() => {
-                const prev = e.target.innerText;
-                e.target.innerText = "✓ Copié !";
+                const prev = e.target.innerText; e.target.innerText = "✓ Copié !";
                 setTimeout(() => e.target.innerText = prev, 2000);
             });
         }
-
         if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
             document.querySelectorAll('.modal').forEach(m => m.style.display = "none");
+            currentEditingCard = null;
         }
     });
 
-    document.getElementById('btnCopyDB').onclick = () => {
-        navigator.clipboard.writeText(genCodeArea.value);
-        alert("Code Database copié ! Collez-le maintenant dans votre fichier database.js");
+    document.getElementById('openAdmin').onclick = () => {
+        currentEditingCard = null;
+        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
+        document.getElementById('adminForm').reset();
+        adminPanel.style.display = 'block';
     };
 
+    document.getElementById('btnCopyDB').onclick = () => {
+        navigator.clipboard.writeText(genCodeArea.value);
+        alert("Copié ! Remplacez le contenu de database.js");
+    };
+
+    closeAdminModeBtn.onclick = () => toggleAdminUI(false);
     renderLibrary();
 });

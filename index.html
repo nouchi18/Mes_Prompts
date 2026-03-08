@@ -23,7 +23,7 @@
         <div class="search-container">
             <div class="search-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher par mot-clé, style ou contenu...">
+                <input type="text" id="searchInput" placeholder="Rechercher un mot-clé...">
             </div>
         </div>
 
@@ -425,12 +425,11 @@ Style : Editorial Fashion Photography.</div>
                 <div class="admin-form">
                     <input type="text" id="newTitle" placeholder="Titre (ex: PORTRAIT)">
                     <input type="text" id="newStyles" placeholder="Styles (ex: portraits 3d)">
-                    <input type="text" id="newImg" placeholder="Lien image (ex: Images/photo.png)">
-                    <textarea id="newPrompt" placeholder="Collez le texte du prompt ici..." rows="5"></textarea>
+                    <input type="text" id="newImg" placeholder="Lien image">
+                    <textarea id="newPrompt" placeholder="Collez le texte ici..." rows="5"></textarea>
                     <button id="savePrompt" class="btn-copy">Générer la carte</button>
                 </div>
                 <div id="generatedCodeSection" style="display:none; margin-top: 20px;">
-                    <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 5px;">Code à coller dans index.html :</p>
                     <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
                 </div>
             </div>

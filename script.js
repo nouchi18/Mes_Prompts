@@ -5,9 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminPanel = document.getElementById('adminPanel');
     const genCodeArea = document.getElementById('generatedCode');
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
+    const adminForm = document.getElementById('adminForm');
+    
+    // Variable cruciale pour distinguer l'ajout de la modification
     let currentEditingCard = null;
 
-    // --- 1. GÉNÉRATION INITIALE ---
+    // --- 1. GÉNÉRATION INITIALE DE LA GRILLE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         promptDatabase.forEach((data) => {
@@ -28,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 2. EXPORT DATABASE (Génération du code) ---
+    // --- 2. EXPORT DATABASE (Génération du code pour database.js) ---
     const generateNewDatabaseCode = () => {
         const currentData = [];
         document.querySelectorAll('.card').forEach(card => {
@@ -42,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const code = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
         genCodeArea.value = code;
         document.getElementById('generatedCodeSection').style.display = 'block';
-        adminPanel.style.display = "block";
     };
 
     // --- 3. RECHERCHE ET FILTRES ---
@@ -90,7 +92,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     controls = document.createElement('div');
                     controls.className = 'admin-controls';
                     
-                    // BOUTON MODIFIER
                     const editBtn = document.createElement('button');
                     editBtn.className = 'btn-edit-card';
                     editBtn.innerText = 'MODIFIER';
@@ -102,10 +103,10 @@ document.addEventListener("DOMContentLoaded", () => {
                         document.getElementById('adminStyles').value = card.getAttribute('data-style');
                         document.getElementById('adminImg').value = card.querySelector('.card-img').src;
                         document.getElementById('adminPrompt').value = card.querySelector('.full-prompt-hidden').innerText;
+                        document.getElementById('generatedCodeSection').style.display = 'none';
                         adminPanel.style.display = "block";
                     };
 
-                    // BOUTON SUPPRIMER
                     const delBtn = document.createElement('button');
                     delBtn.className = 'btn-delete-card';
                     delBtn.innerText = 'SUPPRIMER';
@@ -117,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             updateStats();
                         }
                     };
-
                     controls.append(editBtn, delBtn);
                     card.appendChild(controls);
                 }
@@ -137,20 +137,44 @@ document.addEventListener("DOMContentLoaded", () => {
         const promptText = document.getElementById('adminPrompt').value;
 
         if (currentEditingCard) {
+            // Mise à jour de la carte existante
             currentEditingCard.querySelector('.card-header').innerText = title;
             currentEditingCard.setAttribute('data-style', styles);
             currentEditingCard.querySelector('.card-img').src = img;
             currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
             currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
         } else {
-            const html = `<article class="card" data-style="${styles}"><img src="${img}" class="card-img"><div class="card-content"><div class="card-header">${title}</div><p class="prompt-text"></p><div class="full-prompt-hidden" style="display:none;">${promptText}</div><button class="btn-copy">Copier</button></div></article>`;
-            grid.insertAdjacentHTML('afterbegin', html);
+            // Création d'une nouvelle carte
+            const newCard = document.createElement('article');
+            newCard.className = 'card';
+            newCard.setAttribute('data-style', styles);
+            newCard.innerHTML = `
+                <img src="${img}" class="card-img" alt="${title}">
+                <div class="card-content">
+                    <div class="card-header">${title}</div>
+                    <p class="prompt-text">${promptText.substring(0, 100)}...</p>
+                    <div class="full-prompt-hidden" style="display:none;">${promptText}</div>
+                    <button class="btn-copy">Copier</button>
+                </div>
+            `;
+            grid.insertBefore(newCard, grid.firstChild);
         }
+        
         generateNewDatabaseCode();
         updateStats();
+        // Optionnel : toggleAdminUI(true) pour ajouter les boutons Modifier/Supprimer sur la nouvelle carte
+        if (closeAdminModeBtn.style.display === "flex") toggleAdminUI(true);
     };
 
-    // --- 6. GESTION DES CLICS ---
+    // --- 6. GESTION DES CLICS & MODALES ---
+    document.getElementById('openAdmin').onclick = () => {
+        currentEditingCard = null; // Réinitialisation pour forcer le mode AJOUT
+        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
+        adminForm.reset();
+        document.getElementById('generatedCodeSection').style.display = 'none';
+        adminPanel.style.display = 'block';
+    };
+
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
@@ -170,22 +194,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
             document.querySelectorAll('.modal').forEach(m => m.style.display = "none");
-            currentEditingCard = null;
         }
     });
 
-    document.getElementById('openAdmin').onclick = () => {
-        currentEditingCard = null;
-        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
-        document.getElementById('adminForm').reset();
-        adminPanel.style.display = 'block';
-    };
-
     document.getElementById('btnCopyDB').onclick = () => {
-        navigator.clipboard.writeText(genCodeArea.value);
-        alert("Copié ! Remplacez le contenu de database.js");
+        navigator.clipboard.writeText(genCodeArea.value).then(() => {
+            alert("Code Database copié !");
+        });
     };
 
     closeAdminModeBtn.onclick = () => toggleAdminUI(false);
+    
+    // Initialisation
     renderLibrary();
 });

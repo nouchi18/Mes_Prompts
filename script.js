@@ -6,6 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const genCodeArea = document.getElementById('generatedCode');
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
     const adminForm = document.getElementById('adminForm');
+    const adminModalTitle = document.getElementById('adminModalTitle');
+    const genCodeSection = document.getElementById('generatedCodeSection');
     
     let currentEditingCard = null;
 
@@ -13,37 +15,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const renderLibrary = () => {
         grid.innerHTML = "";
         promptDatabase.forEach((data) => {
-            const card = document.createElement('article');
-            card.className = 'card';
-            card.setAttribute('data-style', data.styles);
-            card.innerHTML = `
-                <img src="${data.img}" class="card-img" alt="${data.title}">
-                <div class="card-content">
-                    <div class="card-header">${data.title}</div>
-                    <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
-                    <div class="full-prompt-hidden" style="display:none;">${data.prompt}</div>
-                    <button class="btn-copy">Copier</button>
-                </div>
-            `;
+            const card = createCardElement(data);
             grid.appendChild(card);
         });
         updateStats();
     };
 
+    const createCardElement = (data) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('data-style', data.styles);
+        card.innerHTML = `
+            <img src="${data.img}" class="card-img" alt="${data.title}">
+            <div class="card-content">
+                <div class="card-header">${data.title}</div>
+                <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
+                <div class="full-prompt-hidden" style="display:none;">${data.prompt}</div>
+                <button class="btn-copy">Copier</button>
+            </div>
+        `;
+        return card;
+    };
+
     // --- 2. EXPORT DATABASE ---
     const generateNewDatabaseCode = () => {
         const currentData = [];
+        // On récupère les cartes dans l'ordre d'affichage (les plus récentes en haut)
         document.querySelectorAll('.card').forEach(card => {
             currentData.push({
                 title: card.querySelector('.card-header').innerText,
                 styles: card.getAttribute('data-style'),
-                img: card.querySelector('.card-img').src,
+                img: card.querySelector('.card-img').getAttribute('src'),
                 prompt: card.querySelector('.full-prompt-hidden').innerText
             });
         });
         const code = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
         genCodeArea.value = code;
-        document.getElementById('generatedCodeSection').style.display = 'block';
+        genCodeSection.style.display = 'block';
     };
 
     // --- 3. RECHERCHE ET FILTRES ---
@@ -97,12 +105,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     editBtn.onclick = (ev) => {
                         ev.stopPropagation();
                         currentEditingCard = card;
-                        document.getElementById('adminModalTitle').innerText = "Modifier le Prompt";
+                        adminModalTitle.innerText = "Modifier le Prompt";
+                        adminForm.style.display = 'block';
                         document.getElementById('adminTitle').value = card.querySelector('.card-header').innerText;
                         document.getElementById('adminStyles').value = card.getAttribute('data-style');
                         document.getElementById('adminImg').value = card.querySelector('.card-img').src;
                         document.getElementById('adminPrompt').value = card.querySelector('.full-prompt-hidden').innerText;
-                        document.getElementById('generatedCodeSection').style.display = 'none';
+                        genCodeSection.style.display = 'none';
                         adminPanel.style.display = "block";
                     };
 
@@ -128,12 +137,17 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAdminModeBtn.style.display = show ? "flex" : "none";
     };
 
-    // --- 5. SAUVEGARDE ---
+    // --- 5. SAUVEGARDE ET GÉNÉRATION ---
     document.getElementById('btnSaveAction').onclick = () => {
         const title = document.getElementById('adminTitle').value.toUpperCase();
         const styles = document.getElementById('adminStyles').value.toLowerCase();
-        const img = document.getElementById('adminImg').value;
+        const img = document.getElementById('adminImg').value || "Images/default.png";
         const promptText = document.getElementById('adminPrompt').value;
+
+        if (!title || !promptText) {
+            alert("Le titre et le contenu du prompt sont obligatoires.");
+            return;
+        }
 
         if (currentEditingCard) {
             currentEditingCard.querySelector('.card-header').innerText = title;
@@ -142,44 +156,38 @@ document.addEventListener("DOMContentLoaded", () => {
             currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
             currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
         } else {
-            const newCard = document.createElement('article');
-            newCard.className = 'card';
-            newCard.setAttribute('data-style', styles);
-            newCard.innerHTML = `
-                <img src="${img}" class="card-img" alt="${title}">
-                <div class="card-content">
-                    <div class="card-header">${title}</div>
-                    <p class="prompt-text">${promptText.substring(0, 100)}...</p>
-                    <div class="full-prompt-hidden" style="display:none;">${promptText}</div>
-                    <button class="btn-copy">Copier</button>
-                </div>
-            `;
+            const data = { title, styles, img, prompt: promptText };
+            const newCard = createCardElement(data);
             grid.insertBefore(newCard, grid.firstChild);
         }
         
+        // Mise à jour visuelle : on montre le code à copier
         generateNewDatabaseCode();
+        adminForm.style.display = 'none';
+        adminModalTitle.innerText = "✅ Code Database Mis à jour";
+        
         updateStats();
+        // Si on est en mode admin permanent, on s'assure que les boutons MODIFIER apparaissent sur la nouvelle carte
         if (closeAdminModeBtn.style.display === "flex") toggleAdminUI(true);
-        adminPanel.style.display = "none"; // Ferme après sauvegarde
     };
 
-    // --- 6. GESTION DES CLICS & MODALES (CORRIGÉ) ---
+    // --- 6. GESTION DES CLICS & MODALES ---
     document.getElementById('openAdmin').onclick = (e) => {
-        e.stopPropagation(); // Empêche le clic de remonter et de fermer la modale
+        e.stopPropagation();
         currentEditingCard = null; 
-        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
+        adminModalTitle.innerText = "Ajouter un Prompt";
+        adminForm.style.display = 'block';
         document.getElementById('adminTitle').value = "";
         document.getElementById('adminStyles').value = "";
         document.getElementById('adminImg').value = "";
         document.getElementById('adminPrompt').value = "";
-        document.getElementById('generatedCodeSection').style.display = 'none';
+        genCodeSection.style.display = 'none';
         adminPanel.style.display = 'block';
     };
 
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         
-        // Clic sur une carte (mais pas sur ses boutons admin ou copier)
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             document.getElementById('modalImg').src = card.querySelector('.card-img').src;
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
@@ -187,7 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = "block";
         }
 
-        // Clic sur les boutons de copie
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -198,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Fermeture des modales (Clic sur la croix ou à l'extérieur du conteneur blanc)
         if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
             document.querySelectorAll('.modal').forEach(m => m.style.display = "none");
         }
@@ -206,7 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('btnCopyDB').onclick = () => {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            alert("Code Database copié !");
+            alert("Code copié ! Remplacez le contenu de database.js par ce texte.");
         });
     };
 

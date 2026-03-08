@@ -7,10 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
     const adminForm = document.getElementById('adminForm');
     
-    // Variable cruciale pour distinguer l'ajout de la modification
     let currentEditingCard = null;
 
-    // --- 1. GÉNÉRATION INITIALE DE LA GRILLE ---
+    // --- 1. GÉNÉRATION DE LA GRILLE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         promptDatabase.forEach((data) => {
@@ -31,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 2. EXPORT DATABASE (Génération du code pour database.js) ---
+    // --- 2. EXPORT DATABASE ---
     const generateNewDatabaseCode = () => {
         const currentData = [];
         document.querySelectorAll('.card').forEach(card => {
@@ -129,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAdminModeBtn.style.display = show ? "flex" : "none";
     };
 
-    // --- 5. SAUVEGARDE (AJOUT OU ÉDITION) ---
+    // --- 5. SAUVEGARDE ---
     document.getElementById('btnSaveAction').onclick = () => {
         const title = document.getElementById('adminTitle').value.toUpperCase();
         const styles = document.getElementById('adminStyles').value.toLowerCase();
@@ -137,14 +136,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const promptText = document.getElementById('adminPrompt').value;
 
         if (currentEditingCard) {
-            // Mise à jour de la carte existante
             currentEditingCard.querySelector('.card-header').innerText = title;
             currentEditingCard.setAttribute('data-style', styles);
             currentEditingCard.querySelector('.card-img').src = img;
             currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
             currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
         } else {
-            // Création d'une nouvelle carte
             const newCard = document.createElement('article');
             newCard.className = 'card';
             newCard.setAttribute('data-style', styles);
@@ -162,28 +159,35 @@ document.addEventListener("DOMContentLoaded", () => {
         
         generateNewDatabaseCode();
         updateStats();
-        // Optionnel : toggleAdminUI(true) pour ajouter les boutons Modifier/Supprimer sur la nouvelle carte
         if (closeAdminModeBtn.style.display === "flex") toggleAdminUI(true);
+        adminPanel.style.display = "none"; // Ferme après sauvegarde
     };
 
-    // --- 6. GESTION DES CLICS & MODALES ---
-document.getElementById('openAdmin').onclick = (e) => {
-    e.stopPropagation(); // 👈 AJOUTE CETTE LIGNE : Empêche la fermeture immédiate
-    currentEditingCard = null; 
-    document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
-    adminForm.reset();
-    document.getElementById('generatedCodeSection').style.display = 'none';
-    adminPanel.style.display = 'block';
-};
+    // --- 6. GESTION DES CLICS & MODALES (CORRIGÉ) ---
+    document.getElementById('openAdmin').onclick = (e) => {
+        e.stopPropagation(); // Empêche le clic de remonter et de fermer la modale
+        currentEditingCard = null; 
+        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
+        document.getElementById('adminTitle').value = "";
+        document.getElementById('adminStyles').value = "";
+        document.getElementById('adminImg').value = "";
+        document.getElementById('adminPrompt').value = "";
+        document.getElementById('generatedCodeSection').style.display = 'none';
+        adminPanel.style.display = 'block';
+    };
 
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
+        
+        // Clic sur une carte (mais pas sur ses boutons admin ou copier)
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             document.getElementById('modalImg').src = card.querySelector('.card-img').src;
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             document.getElementById('promptModal').style.display = "block";
         }
+
+        // Clic sur les boutons de copie
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -193,6 +197,8 @@ document.getElementById('openAdmin').onclick = (e) => {
                 setTimeout(() => e.target.innerText = prev, 2000);
             });
         }
+
+        // Fermeture des modales (Clic sur la croix ou à l'extérieur du conteneur blanc)
         if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
             document.querySelectorAll('.modal').forEach(m => m.style.display = "none");
         }
@@ -206,6 +212,5 @@ document.getElementById('openAdmin').onclick = (e) => {
 
     closeAdminModeBtn.onclick = () => toggleAdminUI(false);
     
-    // Initialisation
     renderLibrary();
 });

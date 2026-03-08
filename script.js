@@ -37,18 +37,31 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. EXPORT DATABASE ---
-    const generateNewDatabaseCode = () => {
+    // --- 2. EXPORT DATABASE (MODIFIÉ) ---
+    // Cette fonction génère le code à partir des données actuelles + un éventuel nouvel item
+    const generateNewDatabaseCode = (newItem = null) => {
         const currentData = [];
-        // On récupère les cartes dans l'ordre d'affichage (les plus récentes en haut)
+        
+        // Si on ajoute un nouveau, il passe en premier
+        if (newItem && !currentEditingCard) {
+            currentData.push(newItem);
+        }
+
+        // On récupère le reste des cartes déjà présentes
         document.querySelectorAll('.card').forEach(card => {
-            currentData.push({
-                title: card.querySelector('.card-header').innerText,
-                styles: card.getAttribute('data-style'),
-                img: card.querySelector('.card-img').getAttribute('src'),
-                prompt: card.querySelector('.full-prompt-hidden').innerText
-            });
+            // Si on est en train de modifier cette carte, on utilise les nouvelles infos du formulaire
+            if (currentEditingCard === card && newItem) {
+                currentData.push(newItem);
+            } else {
+                currentData.push({
+                    title: card.querySelector('.card-header').innerText,
+                    styles: card.getAttribute('data-style'),
+                    img: card.querySelector('.card-img').getAttribute('src'),
+                    prompt: card.querySelector('.full-prompt-hidden').innerText
+                });
+            }
         });
+
         const code = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
         genCodeArea.value = code;
         genCodeSection.style.display = 'block';
@@ -137,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAdminModeBtn.style.display = show ? "flex" : "none";
     };
 
-    // --- 5. SAUVEGARDE ET GÉNÉRATION ---
+    // --- 5. GÉNÉRATION UNIQUEMENT (SANS INJECTION) ---
     document.getElementById('btnSaveAction').onclick = () => {
         const title = document.getElementById('adminTitle').value.toUpperCase();
         const styles = document.getElementById('adminStyles').value.toLowerCase();
@@ -149,26 +162,18 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (currentEditingCard) {
-            currentEditingCard.querySelector('.card-header').innerText = title;
-            currentEditingCard.setAttribute('data-style', styles);
-            currentEditingCard.querySelector('.card-img').src = img;
-            currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
-            currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
-        } else {
-            const data = { title, styles, img, prompt: promptText };
-            const newCard = createCardElement(data);
-            grid.insertBefore(newCard, grid.firstChild);
-        }
-        
-        // Mise à jour visuelle : on montre le code à copier
-        generateNewDatabaseCode();
+        // Créer l'objet data temporaire
+        const tempEntry = { title, styles, img, prompt: promptText };
+
+        // Générer le code global incluant cet item
+        generateNewDatabaseCode(tempEntry);
+
+        // Mise à jour de l'interface
         adminForm.style.display = 'none';
-        adminModalTitle.innerText = "✅ Code Database Mis à jour";
+        adminModalTitle.innerText = "🚀 Code prêt à être copié !";
         
-        updateStats();
-        // Si on est en mode admin permanent, on s'assure que les boutons MODIFIER apparaissent sur la nouvelle carte
-        if (closeAdminModeBtn.style.display === "flex") toggleAdminUI(true);
+        // Note : On ne fait pas renderLibrary() ici car on veut que l'utilisateur 
+        // mette d'abord à jour son fichier JS manuellement.
     };
 
     // --- 6. GESTION DES CLICS & MODALES ---
@@ -212,7 +217,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('btnCopyDB').onclick = () => {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            alert("Code copié ! Remplacez le contenu de database.js par ce texte.");
+            alert("Code copié ! Remplacez TOUT le contenu de database.js, enregistrez, puis actualisez la page.");
+            adminPanel.style.display = 'none';
         });
     };
 

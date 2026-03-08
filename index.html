@@ -42,29 +42,28 @@
     </div>
 
     <div id="adminPanel" class="modal">
-        <div class="modal-container admin-mode">
-            <span class="modal-close" id="closeAdmin">&times;</span>
-            <div class="modal-body">
-                <h2 id="adminModalTitle">Gestion Database</h2>
-                
-                <div class="admin-form" id="adminForm">
-                    <input type="text" id="adminTitle" placeholder="Titre">
-                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
-                    <input type="text" id="adminImg" placeholder="Lien image">
-                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
-                    <button id="btnSaveAction" class="btn-copy">Enregistrer</button>
-                </div>
+    <div class="modal-container admin-mode">
+        <span class="modal-close" id="closeAdmin">&times;</span>
+        <div class="modal-body">
+            <h2 id="adminModalTitle">Gestion des Prompts</h2>
+            <div class="admin-form" id="adminForm">
+                <input type="text" id="adminTitle" placeholder="Titre">
+                <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
+                <input type="text" id="adminImg" placeholder="Lien image">
+                <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
+                <button id="btnSaveAction" class="btn-copy">Enregistrer & Générer Database</button>
+            </div>
 
-                <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
-                    <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 8px;">
-                        ⚠️ Copiez ce code et remplacez TOUT le contenu de <strong>database.js</strong> :
-                    </p>
-                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
-                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code Database</button>
-                </div>
+            <div id="generatedCodeSection" style="display:none; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <p style="color: var(--accent-color); font-size: 0.85rem; font-weight: bold; margin-bottom: 8px;">
+                    ⚠️ Copie ce code et remplace TOUT le contenu de ton fichier database.js :
+                </p>
+                <textarea id="generatedCode" readonly style="width: 100%; height: 150px; background: #000; color: #10b981; font-family: monospace; font-size: 0.75rem; padding: 10px; border: 1px dashed var(--accent-color);"></textarea>
+                <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code Database</button>
             </div>
         </div>
     </div>
+</div>
 
     <div id="promptModal" class="modal">
         <div class="modal-container">

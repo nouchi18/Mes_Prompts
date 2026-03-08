@@ -41,11 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const generateNewDatabaseCode = (newItem = null) => {
         const currentData = [];
         
+        // Si on ajoute un nouveau, il passe en premier
         if (newItem && !currentEditingCard) {
             currentData.push(newItem);
         }
 
         document.querySelectorAll('.card').forEach(card => {
+            // Si on est en train de modifier cette carte, on utilise les nouvelles infos du formulaire
             if (currentEditingCard === card && newItem) {
                 currentData.push(newItem);
             } else {
@@ -129,10 +131,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     delBtn.innerText = 'SUPPRIMER';
                     delBtn.onclick = (ev) => {
                         ev.stopPropagation();
-                        if (confirm("Supprimer ce prompt ?")) {
-                            card.remove();
-                            generateNewDatabaseCode();
-                            updateStats();
+                        if (confirm("Supprimer ce prompt définitivement ?")) {
+                            card.remove(); // Retire la carte du DOM
+                            updateStats(); // Met à jour le compteur
+                            
+                            // Affiche le code mis à jour sans la carte supprimée
+                            generateNewDatabaseCode(); 
+                            adminModalTitle.innerText = "🗑️ Card supprimée ! Code mis à jour :";
+                            adminForm.style.display = 'none';
+                            adminPanel.style.display = 'block';
                         }
                     };
                     controls.append(editBtn, delBtn);
@@ -148,15 +155,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 5. GÉNÉRATION (TITRE OPTIONNEL) ---
     document.getElementById('btnSaveAction').onclick = () => {
-        // Le titre devient optionnel, on utilise || "SANS TITRE"
         const title = document.getElementById('adminTitle').value.trim().toUpperCase() || "SANS TITRE";
         const styles = document.getElementById('adminStyles').value.toLowerCase();
         const img = document.getElementById('adminImg').value || "Images/default.png";
         const promptText = document.getElementById('adminPrompt').value;
 
-        // Seul le contenu du prompt reste obligatoire pour la génération
         if (!promptText) {
-            alert("Le contenu du prompt est obligatoire pour générer le code.");
+            alert("Le contenu du prompt est obligatoire.");
             return;
         }
 

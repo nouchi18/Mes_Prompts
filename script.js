@@ -6,9 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const modal = document.getElementById('promptModal');
     const adminPanel = document.getElementById('adminPanel');
     const editPanel = document.getElementById('editPanel');
+    const closeAdminModeBtn = document.getElementById('closeAdminMode');
     let currentEditingCard = null;
 
-    // --- 1. FONCTION DE FILTRAGE UNIFIÉE ---
+    // --- 1. FILTRAGE UNIFIÉ ---
     const updateDisplay = (mode) => {
         const activeFilter = document.querySelector('.style-card.active').getAttribute('data-filter');
         const searchTerm = searchInput.value.toLowerCase().trim();
@@ -23,10 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
             let isVisible = false;
 
             if (mode === 'search' && searchTerm !== "") {
-                // Recherche globale : On regarde partout
                 isVisible = content.includes(searchTerm) || fullText.includes(searchTerm);
             } else {
-                // Filtrage par style : On respecte la catégorie
                 isVisible = (activeFilter === 'all' || styles.split(' ').includes(activeFilter));
             }
 
@@ -45,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${count} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. LOGIQUE RECHERCHE ET STYLES ---
+    // --- 2. RECHERCHE ET STYLES ---
     searchInput.addEventListener('input', () => {
         if(searchInput.value !== "") {
             styleButtons.forEach(b => b.classList.remove('active'));
@@ -65,27 +64,44 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 3. MODE ADMIN SECRET (Touche 'M') ---
+    // --- 3. MODE ADMIN (Touche 'M') ---
     document.addEventListener('keydown', (e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key.toLowerCase() === 'm') {
             const pass = prompt("Code Administrateur :");
-            if (pass === "1234") { // Changez ce code !
+            if (pass === "1234") { 
                 alert("Mode Édition Activé");
-                document.querySelectorAll('.card').forEach(card => {
-                    if (!card.querySelector('.btn-edit-card')) {
-                        const editBtn = document.createElement('button');
-                        editBtn.className = 'btn-edit-card admin-visible';
-                        editBtn.innerText = 'MODIFIER';
-                        editBtn.onclick = (ev) => {
-                            ev.stopPropagation();
-                            openEditModal(card);
-                        };
-                        card.appendChild(editBtn);
-                    }
-                });
+                toggleAdminVisuals(true);
             }
         }
     });
+
+    const toggleAdminVisuals = (show) => {
+        document.querySelectorAll('.card').forEach(card => {
+            let editBtn = card.querySelector('.btn-edit-card');
+            if (show) {
+                if (!editBtn) {
+                    editBtn = document.createElement('button');
+                    editBtn.className = 'btn-edit-card';
+                    editBtn.innerText = 'MODIFIER';
+                    editBtn.onclick = (ev) => {
+                        ev.stopPropagation();
+                        openEditModal(card);
+                    };
+                    card.appendChild(editBtn);
+                }
+                editBtn.classList.add('admin-visible');
+            } else if (editBtn) {
+                editBtn.classList.remove('admin-visible');
+            }
+        });
+        closeAdminModeBtn.style.display = show ? 'flex' : 'none';
+    };
+
+    closeAdminModeBtn.onclick = () => {
+        toggleAdminVisuals(false);
+        alert("Mode Édition Désactivé");
+    };
 
     const openEditModal = (card) => {
         currentEditingCard = card;
@@ -110,10 +126,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.getElementById('editCodeSection').style.display = 'block';
         document.getElementById('editGeneratedCode').value = currentEditingCard.outerHTML.replace(' admin-visible', '');
-        alert("Modifié ! Copiez le code pour l'index.html.");
+        alert("Modifié ! Copiez le code.");
     };
 
-    // --- 4. GESTION GÉNÉRALE ---
+    // --- 4. GESTION MODALES ---
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
         if (card && !e.target.classList.contains('btn-copy') && !e.target.classList.contains('btn-edit-card')) {

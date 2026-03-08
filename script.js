@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.innerHTML = `
             <img src="${data.img}" class="card-img" alt="${data.title}">
             <div class="card-content">
-                <div class="card-header">${data.title}</div>
+                <div class="card-header">${data.title || "SANS TITRE"}</div>
                 <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
                 <div class="full-prompt-hidden" style="display:none;">${data.prompt}</div>
                 <button class="btn-copy">Copier</button>
@@ -37,19 +37,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. EXPORT DATABASE (MODIFIÉ) ---
-    // Cette fonction génère le code à partir des données actuelles + un éventuel nouvel item
+    // --- 2. EXPORT DATABASE ---
     const generateNewDatabaseCode = (newItem = null) => {
         const currentData = [];
         
-        // Si on ajoute un nouveau, il passe en premier
         if (newItem && !currentEditingCard) {
             currentData.push(newItem);
         }
 
-        // On récupère le reste des cartes déjà présentes
         document.querySelectorAll('.card').forEach(card => {
-            // Si on est en train de modifier cette carte, on utilise les nouvelles infos du formulaire
             if (currentEditingCard === card && newItem) {
                 currentData.push(newItem);
             } else {
@@ -150,30 +146,25 @@ document.addEventListener("DOMContentLoaded", () => {
         closeAdminModeBtn.style.display = show ? "flex" : "none";
     };
 
-    // --- 5. GÉNÉRATION UNIQUEMENT (SANS INJECTION) ---
+    // --- 5. GÉNÉRATION (TITRE OPTIONNEL) ---
     document.getElementById('btnSaveAction').onclick = () => {
-        const title = document.getElementById('adminTitle').value.toUpperCase();
+        // Le titre devient optionnel, on utilise || "SANS TITRE"
+        const title = document.getElementById('adminTitle').value.trim().toUpperCase() || "SANS TITRE";
         const styles = document.getElementById('adminStyles').value.toLowerCase();
         const img = document.getElementById('adminImg').value || "Images/default.png";
         const promptText = document.getElementById('adminPrompt').value;
 
-        if (!title || !promptText) {
-            alert("Le titre et le contenu du prompt sont obligatoires.");
+        // Seul le contenu du prompt reste obligatoire pour la génération
+        if (!promptText) {
+            alert("Le contenu du prompt est obligatoire pour générer le code.");
             return;
         }
 
-        // Créer l'objet data temporaire
         const tempEntry = { title, styles, img, prompt: promptText };
-
-        // Générer le code global incluant cet item
         generateNewDatabaseCode(tempEntry);
 
-        // Mise à jour de l'interface
         adminForm.style.display = 'none';
         adminModalTitle.innerText = "🚀 Code prêt à être copié !";
-        
-        // Note : On ne fait pas renderLibrary() ici car on veut que l'utilisateur 
-        // mette d'abord à jour son fichier JS manuellement.
     };
 
     // --- 6. GESTION DES CLICS & MODALES ---
@@ -217,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('btnCopyDB').onclick = () => {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            alert("Code copié ! Remplacez TOUT le contenu de database.js, enregistrez, puis actualisez la page.");
+            alert("Code copié ! Remplacez le contenu de database.js.");
             adminPanel.style.display = 'none';
         });
     };

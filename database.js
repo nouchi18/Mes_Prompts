@@ -1,11 +1,5 @@
 const promptDatabase = [
     {
-        "title": "TEST",
-        "styles": "femmes fashions",
-        "img": "Images/10889.png",
-        "prompt": "Test"
-    },
-    {
         "title": "CINEMATIC",
         "styles": "portraits caricatures femmes",
         "img": "Images/Gemini_Generated_Image_44306f44306f4430.png",

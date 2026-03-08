@@ -167,13 +167,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // --- 6. GESTION DES CLICS & MODALES ---
-    document.getElementById('openAdmin').onclick = () => {
-        currentEditingCard = null; // Réinitialisation pour forcer le mode AJOUT
-        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
-        adminForm.reset();
-        document.getElementById('generatedCodeSection').style.display = 'none';
-        adminPanel.style.display = 'block';
-    };
+document.getElementById('openAdmin').onclick = (e) => {
+    e.stopPropagation(); // 👈 AJOUTE CETTE LIGNE : Empêche la fermeture immédiate
+    currentEditingCard = null; 
+    document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
+    adminForm.reset();
+    document.getElementById('generatedCodeSection').style.display = 'none';
+    adminPanel.style.display = 'block';
+};
 
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');

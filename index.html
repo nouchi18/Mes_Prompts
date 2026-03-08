@@ -422,35 +422,23 @@ Style : Editorial Fashion Photography.</div>
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
             <div class="modal-body">
-                <h2>Ajouter un Prompt</h2>
-                <div class="admin-form">
-                    <input type="text" id="newTitle" placeholder="Titre">
-                    <input type="text" id="newStyles" placeholder="Styles (ex: portraits 3d)">
-                    <input type="text" id="newImg" placeholder="Lien image">
-                    <textarea id="newPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
-                    <button id="savePrompt" class="btn-copy">Générer la carte</button>
+                <h2 id="adminModalTitle">Gestion des Prompts</h2>
+                
+                <div class="admin-form" id="adminForm">
+                    <input type="text" id="adminTitle" placeholder="Titre">
+                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
+                    <input type="text" id="adminImg" placeholder="Lien image">
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
+                    <button id="btnSaveAction" class="btn-copy">Enregistrer</button>
                 </div>
-                <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
-                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div id="editPanel" class="modal">
-        <div class="modal-container admin-mode">
-            <span class="modal-close" id="closeEdit">&times;</span>
-            <div class="modal-body">
-                <h2>Modifier le Prompt</h2>
-                <div class="admin-form">
-                    <input type="text" id="editTitle">
-                    <input type="text" id="editStyles">
-                    <input type="text" id="editImg">
-                    <textarea id="editPrompt" rows="8"></textarea>
-                    <button id="updatePrompt" class="btn-copy">Mettre à jour & Voir le code</button>
-                </div>
-                <div id="editCodeSection" style="display:none; margin-top: 15px;">
-                    <textarea id="editGeneratedCode" readonly onclick="this.select()"></textarea>
+                <div id="generatedCodeSection" style="display:none; margin-top: 20px;">
+                    <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 15px;">
+                    <p style="color: var(--accent-color); font-size: 0.85rem; font-weight: bold; margin-bottom: 8px;">
+                        ⚠️ Action effectuée ! Copiez le code ci-dessous et remplacez tout le contenu de &lt;main id="grid"&gt; dans votre fichier index.html :
+                    </p>
+                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
+                    <button id="btnCopyFullGrid" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code de la grille</button>
                 </div>
             </div>
         </div>

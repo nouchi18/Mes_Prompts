@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
     let currentEditingCard = null;
 
-    // --- 1. FILTRAGE UNIFIÉ ---
+    // --- 1. FILTRAGE ---
     const updateDisplay = (mode) => {
         const activeFilter = document.querySelector('.style-card.active').getAttribute('data-filter');
         const searchTerm = searchInput.value.toLowerCase().trim();
@@ -21,13 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const content = card.innerText.toLowerCase();
             const fullText = card.querySelector('.full-prompt-hidden').innerText.toLowerCase();
 
-            let isVisible = false;
-
-            if (mode === 'search' && searchTerm !== "") {
-                isVisible = content.includes(searchTerm) || fullText.includes(searchTerm);
-            } else {
-                isVisible = (activeFilter === 'all' || styles.split(' ').includes(activeFilter));
-            }
+            let isVisible = (mode === 'search' && searchTerm !== "") ? 
+                (content.includes(searchTerm) || fullText.includes(searchTerm)) : 
+                (activeFilter === 'all' || styles.split(' ').includes(activeFilter));
 
             if (isVisible) {
                 card.style.display = 'block';
@@ -44,15 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${count} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. RECHERCHE ET STYLES ---
     searchInput.addEventListener('input', () => {
         if(searchInput.value !== "") {
             styleButtons.forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter="all"]').classList.add('active');
             updateDisplay('search');
-        } else {
-            updateDisplay('style');
-        }
+        } else { updateDisplay('style'); }
     });
 
     styleButtons.forEach(btn => {
@@ -64,44 +57,54 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 3. MODE ADMIN (Touche 'M') ---
+    // --- 2. MODE ADMIN & SUPPRESSION ---
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         if (e.key.toLowerCase() === 'm') {
             const pass = prompt("Code Administrateur :");
-            if (pass === "1234") { 
-                alert("Mode Édition Activé");
-                toggleAdminVisuals(true);
-            }
+            if (pass === "1234") { toggleAdminVisuals(true); }
         }
     });
 
     const toggleAdminVisuals = (show) => {
         document.querySelectorAll('.card').forEach(card => {
-            let editBtn = card.querySelector('.btn-edit-card');
+            let controls = card.querySelector('.admin-controls');
             if (show) {
-                if (!editBtn) {
-                    editBtn = document.createElement('button');
+                if (!controls) {
+                    controls = document.createElement('div');
+                    controls.className = 'admin-controls';
+                    
+                    // Bouton Modifier
+                    const editBtn = document.createElement('button');
                     editBtn.className = 'btn-edit-card';
                     editBtn.innerText = 'MODIFIER';
-                    editBtn.onclick = (ev) => {
-                        ev.stopPropagation();
-                        openEditModal(card);
+                    editBtn.onclick = (ev) => { ev.stopPropagation(); openEditModal(card); };
+
+                    // Bouton Supprimer
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn-delete-card';
+                    deleteBtn.innerText = 'SUPPRIMER';
+                    deleteBtn.onclick = (ev) => { 
+                        ev.stopPropagation(); 
+                        if(confirm("Supprimer définitivement cette carte ?")) {
+                            card.remove();
+                            updateDisplay('style');
+                        }
                     };
-                    card.appendChild(editBtn);
+
+                    controls.appendChild(editBtn);
+                    controls.appendChild(deleteBtn);
+                    card.appendChild(controls);
                 }
-                editBtn.classList.add('admin-visible');
-            } else if (editBtn) {
-                editBtn.classList.remove('admin-visible');
+                controls.classList.add('admin-visible');
+            } else if (controls) {
+                controls.classList.remove('admin-visible');
             }
         });
         closeAdminModeBtn.style.display = show ? 'flex' : 'none';
     };
 
-    closeAdminModeBtn.onclick = () => {
-        toggleAdminVisuals(false);
-        alert("Mode Édition Désactivé");
-    };
+    closeAdminModeBtn.onclick = () => toggleAdminVisuals(false);
 
     const openEditModal = (card) => {
         currentEditingCard = card;
@@ -116,23 +119,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const title = document.getElementById('editTitle').value.toUpperCase();
         const styles = document.getElementById('editStyles').value;
         const img = document.getElementById('editImg').value;
-        const prompt = document.getElementById('editPrompt').value;
+        const promptText = document.getElementById('editPrompt').value;
 
         currentEditingCard.querySelector('.card-header').innerText = title;
         currentEditingCard.setAttribute('data-style', styles);
         currentEditingCard.querySelector('.card-img').src = img;
-        currentEditingCard.querySelector('.full-prompt-hidden').innerText = prompt;
-        currentEditingCard.querySelector('.prompt-text').innerText = prompt.substring(0, 100) + "...";
+        currentEditingCard.querySelector('.full-prompt-hidden').innerText = promptText;
+        currentEditingCard.querySelector('.prompt-text').innerText = promptText.substring(0, 100) + "...";
 
         document.getElementById('editCodeSection').style.display = 'block';
         document.getElementById('editGeneratedCode').value = currentEditingCard.outerHTML.replace(' admin-visible', '');
-        alert("Modifié ! Copiez le code.");
+        alert("Carte mise à jour localement !");
     };
 
-    // --- 4. GESTION MODALES ---
+    // --- 3. MODALES & COPIE ---
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
-        if (card && !e.target.classList.contains('btn-copy') && !e.target.classList.contains('btn-edit-card')) {
+        if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             document.getElementById('modalImg').src = card.querySelector('.card-img').src;
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
@@ -141,8 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === 'modalCopyBtn' ? 
-                         document.getElementById('modalDescription').innerText : 
-                         e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
+                document.getElementById('modalDescription').innerText : 
+                e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const prev = e.target.innerText;
                 e.target.innerText = "✓ Copié !";
@@ -163,9 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const title = document.getElementById('newTitle').value.toUpperCase() || "PORTRAIT";
         const styles = document.getElementById('newStyles').value.toLowerCase();
         const img = document.getElementById('newImg').value || "Images/placeholder.png";
-        const prompt = document.getElementById('newPrompt').value;
+        const promptText = document.getElementById('newPrompt').value;
 
-        const cardHTML = `<article class="card" data-style="${styles}"><img src="${img}" class="card-img" alt="${title}"><div class="card-content"><div class="card-header">${title}</div><p class="prompt-text"></p><div class="full-prompt-hidden" style="display:none;">${prompt}</div><button class="btn-copy">Copier</button></div></article>`;
+        const cardHTML = `<article class="card" data-style="${styles}"><img src="${img}" class="card-img" alt="${title}"><div class="card-content"><div class="card-header">${title}</div><p class="prompt-text"></p><div class="full-prompt-hidden" style="display:none;">${promptText}</div><button class="btn-copy">Copier</button></div></article>`;
         grid.insertAdjacentHTML('afterbegin', cardHTML);
         document.getElementById('generatedCodeSection').style.display = 'block';
         document.getElementById('generatedCode').value = cardHTML;

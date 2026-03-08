@@ -11,7 +11,7 @@
 
     <header>
         <a href="#" class="logo">Prompt<span>Nouchi</span></a>
-        <div id="counter">0 Prompt affiché</div>
+        <div id="counter">Chargement...</div>
     </header>
 
     <div class="container">
@@ -23,7 +23,7 @@
         <div class="search-container">
             <div class="search-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher un mot-clé...">
+                <input type="text" id="searchInput" placeholder="Rechercher un mot, un style, une émotion...">
             </div>
         </div>
 
@@ -426,11 +426,30 @@ Style : Editorial Fashion Photography.</div>
                     <input type="text" id="newTitle" placeholder="Titre (ex: PORTRAIT)">
                     <input type="text" id="newStyles" placeholder="Styles (ex: portraits 3d)">
                     <input type="text" id="newImg" placeholder="Lien image">
-                    <textarea id="newPrompt" placeholder="Collez le texte ici..." rows="5"></textarea>
+                    <textarea id="newPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
                     <button id="savePrompt" class="btn-copy">Générer la carte</button>
                 </div>
-                <div id="generatedCodeSection" style="display:none; margin-top: 20px;">
+                <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
                     <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="editPanel" class="modal">
+        <div class="modal-container admin-mode">
+            <span class="modal-close" id="closeEdit">&times;</span>
+            <div class="modal-body">
+                <h2>Modifier le Prompt</h2>
+                <div class="admin-form">
+                    <input type="text" id="editTitle">
+                    <input type="text" id="editStyles">
+                    <input type="text" id="editImg">
+                    <textarea id="editPrompt" rows="8"></textarea>
+                    <button id="updatePrompt" class="btn-copy">Mettre à jour & Voir le code</button>
+                </div>
+                <div id="editCodeSection" style="display:none; margin-top: 15px;">
+                    <textarea id="editGeneratedCode" readonly onclick="this.select()"></textarea>
                 </div>
             </div>
         </div>

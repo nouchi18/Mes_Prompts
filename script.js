@@ -5,8 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const counter = document.getElementById('counter');
     const modal = document.getElementById('promptModal');
     const adminPanel = document.getElementById('adminPanel');
+    const editPanel = document.getElementById('editPanel');
+    let currentEditingCard = null;
 
-    // --- 1. FONCTION DE FILTRAGE ---
+    // --- 1. FONCTION DE FILTRAGE UNIFIÉE ---
     const updateDisplay = (mode) => {
         const activeFilter = document.querySelector('.style-card.active').getAttribute('data-filter');
         const searchTerm = searchInput.value.toLowerCase().trim();
@@ -20,18 +22,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let isVisible = false;
 
-            if (mode === 'search') {
-                // En mode recherche : On ignore le bouton de style (sauf s'il est vide)
+            if (mode === 'search' && searchTerm !== "") {
+                // Recherche globale : On regarde partout
                 isVisible = content.includes(searchTerm) || fullText.includes(searchTerm);
             } else {
-                // En mode style : On affiche tout le style, on ignore la barre de recherche
+                // Filtrage par style : On respecte la catégorie
                 isVisible = (activeFilter === 'all' || styles.split(' ').includes(activeFilter));
             }
 
             if (isVisible) {
                 card.style.display = 'block';
                 count++;
-                // Génération de l'aperçu si nécessaire
                 const preview = card.querySelector('.prompt-text');
                 if (preview && preview.innerText === "") {
                     const full = card.querySelector('.full-prompt-hidden').innerText.trim();
@@ -44,49 +45,88 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${count} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. ÉCOUTEURS ---
-
-    // Quand on tape dans la recherche
+    // --- 2. LOGIQUE RECHERCHE ET STYLES ---
     searchInput.addEventListener('input', () => {
-        // Optionnel : Désactiver le bouton de style visuellement si on veut, 
-        // ou simplement forcer la recherche sur tout.
         if(searchInput.value !== "") {
             styleButtons.forEach(b => b.classList.remove('active'));
             document.querySelector('[data-filter="all"]').classList.add('active');
+            updateDisplay('search');
+        } else {
+            updateDisplay('style');
         }
-        updateDisplay('search');
     });
 
-    // Quand on clique sur un style
     styleButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            // 1. On vide la barre de recherche
             searchInput.value = "";
-            // 2. On change l'état actif
             styleButtons.forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            // 3. On affiche tout le style
             updateDisplay('style');
         });
     });
 
-    // --- 3. MODALES ET COPIE ---
+    // --- 3. MODE ADMIN SECRET (Touche 'M') ---
+    document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'm') {
+            const pass = prompt("Code Administrateur :");
+            if (pass === "1234") { // Changez ce code !
+                alert("Mode Édition Activé");
+                document.querySelectorAll('.card').forEach(card => {
+                    if (!card.querySelector('.btn-edit-card')) {
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'btn-edit-card admin-visible';
+                        editBtn.innerText = 'MODIFIER';
+                        editBtn.onclick = (ev) => {
+                            ev.stopPropagation();
+                            openEditModal(card);
+                        };
+                        card.appendChild(editBtn);
+                    }
+                });
+            }
+        }
+    });
+
+    const openEditModal = (card) => {
+        currentEditingCard = card;
+        document.getElementById('editTitle').value = card.querySelector('.card-header').innerText;
+        document.getElementById('editStyles').value = card.getAttribute('data-style');
+        document.getElementById('editImg').value = card.querySelector('.card-img').src;
+        document.getElementById('editPrompt').value = card.querySelector('.full-prompt-hidden').innerText;
+        editPanel.style.display = 'block';
+    };
+
+    document.getElementById('updatePrompt').onclick = () => {
+        const title = document.getElementById('editTitle').value.toUpperCase();
+        const styles = document.getElementById('editStyles').value;
+        const img = document.getElementById('editImg').value;
+        const prompt = document.getElementById('editPrompt').value;
+
+        currentEditingCard.querySelector('.card-header').innerText = title;
+        currentEditingCard.setAttribute('data-style', styles);
+        currentEditingCard.querySelector('.card-img').src = img;
+        currentEditingCard.querySelector('.full-prompt-hidden').innerText = prompt;
+        currentEditingCard.querySelector('.prompt-text').innerText = prompt.substring(0, 100) + "...";
+
+        document.getElementById('editCodeSection').style.display = 'block';
+        document.getElementById('editGeneratedCode').value = currentEditingCard.outerHTML.replace(' admin-visible', '');
+        alert("Modifié ! Copiez le code pour l'index.html.");
+    };
+
+    // --- 4. GESTION GÉNÉRALE ---
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
-        
-        if (card && !e.target.classList.contains('btn-copy')) {
+        if (card && !e.target.classList.contains('btn-copy') && !e.target.classList.contains('btn-edit-card')) {
             document.getElementById('modalImg').src = card.querySelector('.card-img').src;
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
         }
 
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === 'modalCopyBtn' ? 
                          document.getElementById('modalDescription').innerText : 
                          e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
-            
             navigator.clipboard.writeText(text).then(() => {
                 const prev = e.target.innerText;
                 e.target.innerText = "✓ Copié !";
@@ -94,36 +134,27 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (e.target.classList.contains('modal-close') || e.target === modal || e.target === adminPanel) {
+        if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
             modal.style.display = 'none';
             adminPanel.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            editPanel.style.display = 'none';
         }
     });
 
     document.getElementById('openAdmin').onclick = () => adminPanel.style.display = 'block';
 
-    document.getElementById('savePrompt').addEventListener('click', () => {
+    document.getElementById('savePrompt').onclick = () => {
         const title = document.getElementById('newTitle').value.toUpperCase() || "PORTRAIT";
         const styles = document.getElementById('newStyles').value.toLowerCase();
         const img = document.getElementById('newImg').value || "Images/placeholder.png";
         const prompt = document.getElementById('newPrompt').value;
 
-        const cardHTML = `<article class="card" data-style="${styles}">
-    <img src="${img}" class="card-img" alt="${title}">
-    <div class="card-content">
-        <div class="card-header">${title}</div>
-        <p class="prompt-text"></p>
-        <div class="full-prompt-hidden" style="display:none;">${prompt}</div>
-        <button class="btn-copy">Copier</button>
-    </div>
-</article>`.trim();
-
+        const cardHTML = `<article class="card" data-style="${styles}"><img src="${img}" class="card-img" alt="${title}"><div class="card-content"><div class="card-header">${title}</div><p class="prompt-text"></p><div class="full-prompt-hidden" style="display:none;">${prompt}</div><button class="btn-copy">Copier</button></div></article>`;
         grid.insertAdjacentHTML('afterbegin', cardHTML);
         document.getElementById('generatedCodeSection').style.display = 'block';
         document.getElementById('generatedCode').value = cardHTML;
         updateDisplay('style');
-    });
+    };
 
     updateDisplay('style');
 });

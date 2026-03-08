@@ -17,13 +17,13 @@
     <div class="container">
         <section class="hero">
             <h1>Ma Bibliothèque de Prompts</h1>
-            <p>Données gérées via database.js pour une performance optimale.</p>
+            <p>Gestion optimisée via database.js.</p>
         </section>
 
         <div class="search-container">
             <div class="search-wrapper">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher un mot, un style, un détail...">
+                <input type="text" id="searchInput" placeholder="Rechercher un mot, un style...">
             </div>
         </div>
 
@@ -34,7 +34,7 @@
                 <div class="style-card" data-filter="femmes"><span class="style-icon">F</span>emmes</div>
                 <div class="style-card" data-filter="hommes"><span class="style-icon">H</span>ommes</div>
                 <div class="style-card" data-filter="3d"><span class="style-icon">3</span>D</div>
-                </div>
+            </div>
         </nav>
 
         <main class="prompts-grid" id="grid">
@@ -45,12 +45,23 @@
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
             <div class="modal-body">
-                <h2>Mise à jour de la Database</h2>
-                <p style="color: var(--accent-color); font-size: 0.85rem; margin-bottom: 10px;">
-                    ⚠️ Copiez le code ci-dessous et remplacez TOUT le contenu de votre fichier <strong>database.js</strong> :
-                </p>
-                <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
-                <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 15px;">Copier le code Database</button>
+                <h2 id="adminModalTitle">Gestion Database</h2>
+                
+                <div class="admin-form" id="adminForm">
+                    <input type="text" id="adminTitle" placeholder="Titre">
+                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
+                    <input type="text" id="adminImg" placeholder="Lien image">
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
+                    <button id="btnSaveAction" class="btn-copy">Enregistrer</button>
+                </div>
+
+                <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
+                    <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 8px;">
+                        ⚠️ Copiez ce code et remplacez TOUT le contenu de <strong>database.js</strong> :
+                    </p>
+                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
+                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code Database</button>
+                </div>
             </div>
         </div>
     </div>
@@ -67,6 +78,7 @@
         </div>
     </div>
 
+    <button id="openAdmin" class="btn-admin-float">+</button>
     <button id="closeAdminMode" class="btn-admin-float btn-exit-admin" style="display: none;">✕</button>
 
     <script src="database.js"></script>

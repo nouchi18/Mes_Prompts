@@ -2,31 +2,21 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PromptNouchi – Library</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <header>
         <a href="#" class="logo">Prompt<span>Nouchi</span></a>
         <div id="counter">0 Prompt(s) affiché(s)</div>
     </header>
 
     <div class="container">
-        <section class="hero">
-            <h1>Ma Bibliothèque de Prompts</h1>
-            <p>Gestion optimisée via database.js.</p>
-        </section>
-
         <div class="search-container">
-            <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher un mot, un style...">
-            </div>
+            <input type="text" id="searchInput" placeholder="Rechercher un prompt...">
         </div>
 
+        <nav class="styles-grid">
         <nav class="styles-section">
             <div class="styles-grid">
                 <div class="style-card active" data-filter="all">
@@ -99,19 +89,16 @@
     <div id="promptModal" class="modal">
         <div class="modal-container">
             <span class="modal-close">&times;</span>
-            
             <div class="modal-slider-wrapper">
                 <button id="prevImg" class="slider-btn">❮</button>
                 <img id="modalImg" src="" class="modal-img-main">
                 <button id="nextImg" class="slider-btn">❯</button>
             </div>
-
             <div id="thumbnailContainer" class="thumbnail-list"></div>
-
             <div class="modal-body">
                 <h2 id="modalTitle"></h2>
                 <div id="modalDescription"></div>
-                <button id="modalCopyBtn" class="btn-copy">Copier le prompt complet</button>
+                <button id="modalCopyBtn" class="btn-copy">Copier le prompt</button>
             </div>
         </div>
     </div>
@@ -121,21 +108,16 @@
             <span class="modal-close" id="closeAdmin">&times;</span>
             <div class="modal-body">
                 <h2 id="adminModalTitle">Gestion Database</h2>
-                
                 <div class="admin-form" id="adminForm">
-                    <input type="text" id="adminTitle" placeholder="TITRE DU PROMPT">
-                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d femmes)">
-                    <textarea id="adminImg" placeholder="Liens images (un lien par ligne)" rows="3"></textarea>
+                    <input type="text" id="adminTitle" placeholder="Titre">
+                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
+                    <textarea id="adminImg" placeholder="Liens images (un par ligne)" rows="3"></textarea>
                     <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code</button>
                 </div>
-
                 <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
-                    <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 8px;">
-                        ⚠️ Remplacez le contenu de <strong>database.js</strong> par ceci :
-                    </p>
-                    <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
-                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code</button>
+                    <textarea id="generatedCode" readonly></textarea>
+                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981;">Copier le code final</button>
                 </div>
             </div>
         </div>

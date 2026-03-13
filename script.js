@@ -3,12 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
     const adminPanel = document.getElementById('adminPanel');
+    const adminForm = document.getElementById('adminForm');
     
     let currentEditingCard = null;
     let currentImages = [];
     let currentImgIdx = 0;
 
-    // --- RENDU ---
+    // --- RENDU GRILLE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         promptDatabase.forEach(data => {
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- MODALE & SLIDER ---
+    // --- SLIDER ---
     const updateSlider = () => {
         document.getElementById('modalImg').src = currentImages[currentImgIdx];
         document.querySelectorAll('.thumb-item').forEach((t, i) => {
@@ -37,8 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
+    document.getElementById('prevImg').onclick = () => {
+        currentImgIdx = (currentImgIdx - 1 + currentImages.length) % currentImages.length;
+        updateSlider();
+    };
+
+    document.getElementById('nextImg').onclick = () => {
+        currentImgIdx = (currentImgIdx + 1) % currentImages.length;
+        updateSlider();
+    };
+
+    // --- CLICS ET MODALES ---
     document.addEventListener('click', (e) => {
         const card = e.target.closest('.card');
+        
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const data = JSON.parse(card.querySelector('.full-data-hidden').innerText);
             currentImages = data.images;
@@ -65,9 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
                 JSON.parse(e.target.closest('.card').querySelector('.full-data-hidden').innerText).prompt;
-            navigator.clipboard.writeText(text);
-            e.target.innerText = "✓ Copié !";
-            setTimeout(() => e.target.innerText = "Copier", 2000);
+            navigator.clipboard.writeText(text).then(() => {
+                const prev = e.target.innerText; e.target.innerText = "✓ Copié !";
+                setTimeout(() => e.target.innerText = prev, 2000);
+            });
         }
 
         if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal')) {
@@ -75,42 +89,36 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    document.getElementById('prevImg').onclick = () => {
-        currentImgIdx = (currentImgIdx - 1 + currentImages.length) % currentImages.length;
-        updateSlider();
-    };
-
-    document.getElementById('nextImg').onclick = () => {
-        currentImgIdx = (currentImgIdx + 1) % currentImages.length;
-        updateSlider();
-    };
-
-    // --- ADMIN ---
+    // --- ADMIN (Bouton +) ---
     document.getElementById('openAdmin').onclick = () => {
         currentEditingCard = null;
-        document.getElementById('adminForm').reset();
+        adminForm.reset();
+        document.getElementById('adminModalTitle').innerText = "Ajouter un Prompt";
         document.getElementById('generatedCodeSection').style.display = 'none';
+        adminForm.style.display = 'block';
         adminPanel.style.display = 'block';
     };
 
     document.getElementById('btnSaveAction').onclick = () => {
-        const images = document.getElementById('adminImg').value.split('\n').filter(l => l.trim() !== "");
+        const lines = document.getElementById('adminImg').value.split('\n').filter(l => l.trim() !== "");
         const newItem = {
             title: document.getElementById('adminTitle').value.toUpperCase(),
             styles: document.getElementById('adminStyles').value.toLowerCase(),
-            images: images,
+            images: lines.length ? lines : ["Images/default.png"],
             prompt: document.getElementById('adminPrompt').value
         };
 
-        const currentDB = [];
-        if (!currentEditingCard) currentDB.push(newItem);
+        const currentData = [];
+        if (!currentEditingCard) currentData.push(newItem);
         
         document.querySelectorAll('.card').forEach(c => {
-            currentDB.push(JSON.parse(c.querySelector('.full-data-hidden').innerText));
+            if (currentEditingCard === c) currentData.push(newItem);
+            else currentData.push(JSON.parse(c.querySelector('.full-data-hidden').innerText));
         });
 
-        document.getElementById('generatedCode').value = `const promptDatabase = ${JSON.stringify(currentDB, null, 4)};`;
+        document.getElementById('generatedCode').value = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
         document.getElementById('generatedCodeSection').style.display = 'block';
+        adminForm.style.display = 'none';
     };
 
     const updateStats = () => {

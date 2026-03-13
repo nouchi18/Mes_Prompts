@@ -13,7 +13,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 body { background-color: var(--bg-color); color: var(--text-primary); line-height: 1.6; }
 
-/* ... Styles Header, Hero et Recherche conservés ... */
+/* HEADER & GRID */
 header { padding: 1rem 5%; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(15, 17, 21, 0.95); backdrop-filter: blur(10px); z-index: 1000; }
 .logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: white; }
 .logo span { color: var(--accent-color); }
@@ -25,33 +25,35 @@ header { padding: 1rem 5%; border-bottom: 1px solid var(--border-color); display
 .card { background: var(--surface-color); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); position: relative; cursor: pointer; transition: 0.3s; }
 .card:hover { border-color: var(--accent-color); transform: translateY(-5px); }
 .card-img { width: 100%; height: 250px; object-fit: cover; background: #000; }
+.card-content { padding: 1.2rem; }
+.card-header { color: var(--accent-color); font-weight: 800; font-size: 0.7rem; margin-bottom: 0.5rem; text-transform: uppercase; }
 
 /* MODALE SLIDER */
 .modal-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; background: #000; }
 .modal-img-main { width: 100%; max-height: 450px; object-fit: contain; }
-
-.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: white; border: none; padding: 15px; cursor: pointer; font-size: 1.2rem; z-index: 10; transition: 0.2s; }
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 15px; cursor: pointer; font-size: 1.5rem; z-index: 10; }
 .slider-btn:hover { background: var(--accent-color); color: #000; }
 #prevImg { left: 0; border-radius: 0 5px 5px 0; }
 #nextImg { right: 0; border-radius: 5px 0 0 5px; }
 
-.thumbnail-list { display: flex; gap: 10px; padding: 10px; justify-content: center; background: rgba(0,0,0,0.1); border-bottom: 1px solid var(--border-color); }
-.thumb-item { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; cursor: pointer; opacity: 0.4; border: 2px solid transparent; transition: 0.3s; }
+.thumbnail-list { display: flex; gap: 8px; padding: 12px; justify-content: center; background: #111; overflow-x: auto; }
+.thumb-item { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; cursor: pointer; opacity: 0.4; border: 2px solid transparent; transition: 0.2s; }
 .thumb-item.active { opacity: 1; border-color: var(--accent-color); }
 
-/* ADMIN & MODALES */
-.admin-controls { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; }
-.btn-edit-card { background: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
-.btn-delete-card { background: var(--danger-color); color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; }
-
-.btn-admin-float { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent-color); border: none; font-size: 1.5rem; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; }
-.btn-exit-admin { bottom: 90px; background: var(--danger-color); color: white; display: none; }
-
+/* ADMIN & MODALS */
 .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); padding: 20px; overflow-y: auto; }
 .modal-container { background: var(--surface-color); max-width: 750px; margin: auto; border-radius: 15px; border: 1px solid var(--border-color); position: relative; overflow: hidden; }
 .modal-close { position: absolute; right: 15px; top: 10px; font-size: 2rem; color: white; cursor: pointer; z-index: 2100; }
 .modal-body { padding: 2rem; }
-.btn-copy { width: 100%; background: var(--accent-color); color: #000; border: none; padding: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+
+.admin-controls { position: absolute; top: 10px; right: 10px; display: none; gap: 5px; z-index: 10; }
+.btn-edit-card, .btn-delete-card { padding: 6px 10px; border-radius: 4px; border: none; font-size: 0.65rem; font-weight: bold; cursor: pointer; color: white; }
+.btn-edit-card { background: var(--success-color); }
+.btn-delete-card { background: var(--danger-color); }
+
+.btn-admin-float { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent-color); border: none; font-size: 1.5rem; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+.btn-exit-admin { bottom: 90px; background: var(--danger-color); color: white; display: none; }
 
 .admin-form input, .admin-form textarea { background: var(--bg-color); border: 1px solid var(--border-color); color: white; padding: 12px; border-radius: 8px; width: 100%; margin-bottom: 10px; }
-#generatedCode { width: 100%; height: 200px; background: #000; color: #10b981; font-family: monospace; padding: 10px; border-radius: 8px; }
+#generatedCode { width: 100%; height: 180px; background: #000; color: #10b981; font-family: monospace; font-size: 0.75rem; padding: 10px; border-radius: 8px; }
+.btn-copy { width: 100%; background: var(--accent-color); color: #000; border: none; padding: 0.8rem; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; }

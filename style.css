@@ -10,308 +10,48 @@
     --success-color: #10b981;
 }
 
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Inter', sans-serif; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+body { background-color: var(--bg-color); color: var(--text-primary); line-height: 1.6; overflow-x: hidden; }
 
-body { 
-    background-color: var(--bg-color); 
-    color: var(--text-primary); 
-    line-height: 1.6; 
-}
+/* ... (Garder tes styles existants pour Header, Hero, Recherche) ... */
 
-/* HEADER & NAVIGATION */
-header { 
-    padding: 1rem 5%; 
-    border-bottom: 1px solid var(--border-color); 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    position: sticky; 
-    top: 0; 
-    background: rgba(15, 17, 21, 0.95); 
-    backdrop-filter: blur(10px); 
-    z-index: 1000; 
-}
-
-.logo { 
-    font-size: 1.5rem; 
-    font-weight: 800; 
-    text-decoration: none; 
-    color: white; 
-}
-
+header { padding: 1rem 5%; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(15, 17, 21, 0.95); backdrop-filter: blur(10px); z-index: 1000; }
+.logo { font-size: 1.5rem; font-weight: 800; text-decoration: none; color: white; }
 .logo span { color: var(--accent-color); }
+#counter { font-size: 0.85rem; color: var(--text-secondary); background: var(--surface-color); padding: 0.5rem 1rem; border-radius: 20px; border: 1px solid var(--border-color); }
 
-#counter { 
-    font-size: 0.85rem; 
-    color: var(--text-secondary); 
-    background: var(--surface-color); 
-    padding: 0.5rem 1rem; 
-    border-radius: 20px; 
-    border: 1px solid var(--border-color);
-}
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+.prompts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; }
 
-/* CONTAINER & HERO */
-.container { 
-    max-width: 1200px; 
-    margin: 0 auto; 
-    padding: 2rem; 
-}
-
-.hero { 
-    text-align: center; 
-    padding: 2rem 0; 
-}
-
-.hero h1 { 
-    font-size: 2.2rem; 
-    background: linear-gradient(to right, #fff, var(--accent-color)); 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-}
-
-/* RECHERCHE & FILTRES */
-.search-container { 
-    max-width: 600px; 
-    margin: 0 auto 2rem auto; 
-}
-
-.search-wrapper { 
-    position: relative; 
-    display: flex; 
-    align-items: center; 
-}
-
-.search-icon { 
-    position: absolute; 
-    left: 15px; 
-    color: var(--accent-color); 
-}
-
-#searchInput { 
-    width: 100%; 
-    padding: 0.8rem 1rem 0.8rem 3rem; 
-    background: var(--surface-color); 
-    border: 2px solid var(--border-color); 
-    border-radius: 12px; 
-    color: white; 
-    outline: none; 
-    transition: 0.3s; 
-}
-
-#searchInput:focus { border-color: var(--accent-color); }
-
-.styles-grid { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 0.8rem; 
-    justify-content: center; 
-    margin-bottom: 3rem; 
-}
-
-.style-card { 
-    background: var(--surface-color); 
-    border: 1px solid var(--border-color); 
-    padding: 0.6rem 1.2rem; 
-    border-radius: 50px; 
-    cursor: pointer; 
-    transition: 0.3s; 
-    font-size: 0.85rem; 
-    color: var(--text-secondary); 
-}
-
-.style-card.active { 
-    background: var(--accent-color); 
-    color: #000; 
-    border-color: var(--accent-color); 
-}
-
-/* GRILLE DE PROMPTS */
-.prompts-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
-    gap: 1.5rem; 
-}
-
-.card { 
-    background: var(--surface-color); 
-    border-radius: 12px; 
-    overflow: hidden; 
-    border: 1px solid var(--border-color); 
-    position: relative; 
-    cursor: pointer; 
-    transition: 0.3s; 
-}
-
-.card:hover { 
-    border-color: var(--accent-color); 
-    transform: translateY(-5px); 
-}
-
-.card-img { 
-    width: 100%; 
-    height: 250px; 
-    object-fit: contain; /* Mieux pour les proportions */
-    background: #000; 
-}
-
+/* CARTE UNIQUE */
+.card { background: var(--surface-color); border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); position: relative; cursor: pointer; transition: 0.3s; }
+.card:hover { border-color: var(--accent-color); transform: translateY(-5px); }
+.card-img { width: 100%; height: 250px; object-fit: cover; background: #000; }
 .card-content { padding: 1.2rem; }
+.card-header { color: var(--accent-color); font-weight: 800; font-size: 0.7rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+.prompt-text { color: var(--text-secondary); font-size: 0.85rem; height: 3em; overflow: hidden; }
 
-.card-header { 
-    color: var(--accent-color); 
-    font-weight: 800; 
-    font-size: 0.7rem; 
-    margin-bottom: 0.5rem; 
-    text-transform: uppercase; 
-}
+/* MODALE SLIDER */
+.modal-slider-wrapper { position: relative; width: 100%; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 15px 15px 0 0; }
+.modal-img-main { max-width: 100%; max-height: 500px; object-fit: contain; }
 
-.prompt-text { 
-    color: var(--text-secondary); 
-    font-size: 0.85rem; 
-    height: 3em; 
-    overflow: hidden; 
-    margin-bottom: 1rem; 
-}
+.slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.6); color: white; border: none; padding: 20px 15px; cursor: pointer; font-size: 1.2rem; z-index: 5; transition: 0.2s; }
+.slider-btn:hover { background: var(--accent-color); color: #000; }
+#prevImg { left: 0; border-radius: 0 8px 8px 0; }
+#nextImg { right: 0; border-radius: 8px 0 0 8px; }
 
-.btn-copy { 
-    width: 100%; 
-    background: var(--accent-color); 
-    color: #000; 
-    border: none; 
-    padding: 0.7rem; 
-    border-radius: 6px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    transition: 0.2s;
-}
+/* MINIATURES */
+.thumbnail-list { display: flex; gap: 10px; padding: 15px; justify-content: center; background: #111; overflow-x: auto; border-bottom: 1px solid var(--border-color); }
+.thumb-item { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; cursor: pointer; opacity: 0.5; border: 2px solid transparent; transition: 0.3s; }
+.thumb-item.active { opacity: 1; border-color: var(--accent-color); }
 
-.btn-copy:hover { background: var(--accent-hover); }
+/* ... (Garder tes styles existants pour Admin, Boutons, etc.) ... */
+.btn-copy { width: 100%; background: var(--accent-color); color: #000; border: none; padding: 0.7rem; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+.modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); padding: 20px; overflow-y: auto; }
+.modal-container { background: var(--surface-color); max-width: 800px; margin: auto; border-radius: 15px; border: 1px solid var(--border-color); position: relative; }
+.modal-close { position: absolute; right: 15px; top: 10px; font-size: 2rem; color: white; cursor: pointer; z-index: 2100; }
+.modal-body { padding: 2rem; }
+#modalDescription { white-space: pre-wrap; color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.9rem; }
 
-/* ADMINISTRATION */
-.admin-controls { 
-    position: absolute; 
-    top: 10px; 
-    right: 10px; 
-    display: none; 
-    gap: 5px; 
-    z-index: 10; 
-}
-
-.btn-edit-card, .btn-delete-card { 
-    padding: 6px 12px; 
-    border-radius: 5px; 
-    font-size: 0.65rem; 
-    font-weight: bold; 
-    border: none; 
-    color: white; 
-    cursor: pointer; 
-}
-
-.btn-edit-card { background: var(--success-color); }
-.btn-delete-card { background: var(--danger-color); }
-
-.btn-admin-float { 
-    position: fixed; 
-    bottom: 30px; 
-    right: 30px; 
-    width: 50px; 
-    height: 50px; 
-    border-radius: 50%; 
-    background: var(--accent-color); 
-    border: none; 
-    color: #000; 
-    font-size: 1.5rem; 
-    cursor: pointer; 
-    z-index: 999; /* Inférieur à la modale */
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-}
-
-.btn-exit-admin { 
-    bottom: 100px; 
-    background: var(--danger-color); 
-    color: white; 
-    display: none; 
-}
-
-/* MODALES */
-.modal { 
-    display: none; 
-    position: fixed; 
-    z-index: 2000; 
-    left: 0; 
-    top: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(0,0,0,0.9); 
-    backdrop-filter: blur(10px); 
-    padding: 20px; 
-    overflow-y: auto; 
-}
-
-.modal-container { 
-    background: var(--surface-color); 
-    max-width: 700px; 
-    margin: auto; 
-    border-radius: 15px; 
-    border: 1px solid var(--border-color); 
-    position: relative; 
-    margin-top: 20px;
-}
-
-.modal-close { 
-    position: absolute; 
-    right: 15px; 
-    top: 10px; 
-    font-size: 2rem; 
-    color: white; 
-    cursor: pointer; 
-    z-index: 2100;
-}
-
-.modal-body { padding: 2.5rem; }
-
-.modal-img {
-    width: 100%;
-    max-height: 450px;
-    object-fit: contain;
-    background: #000;
-    border-radius: 15px 15px 0 0;
-}
-
-#modalDescription {
-    white-space: pre-wrap;
-    color: var(--text-secondary);
-    margin-bottom: 2rem;
-    font-size: 0.9rem;
-}
-
-/* FORMULAIRES ADMIN */
-.admin-form input, .admin-form textarea { 
-    background: var(--bg-color); 
-    border: 1px solid var(--border-color); 
-    color: white; 
-    padding: 12px; 
-    border-radius: 8px; 
-    width: 100%; 
-    margin-bottom: 10px; 
-    font-size: 1rem;
-}
-
-#generatedCode { 
-    width: 100%; 
-    height: 250px; 
-    background: #000; 
-    color: #10b981; 
-    font-family: monospace; 
-    font-size: 0.75rem; 
-    padding: 15px; 
-    border-radius: 8px; 
-    border: 1px dashed var(--accent-color); 
-}
+.btn-admin-float { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent-color); border: none; font-size: 1.5rem; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; }
+.btn-exit-admin { bottom: 90px; background: var(--danger-color); color: white; display: none; }

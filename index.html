@@ -28,72 +28,38 @@
         </div>
 
         <nav class="styles-section">
-            <div class="styles-grid">
-                <div class="style-card active" data-filter="all">
-                    <span class="style-icon">#</span>Tous
+            <div class="styles-grid" id="styleFilterContainer">
+                <div class="style-card active" data-filter="all"># Tous</div>
+                <div class="style-card" data-filter="3d">3D</div>
+                <div class="style-card" data-filter="portraits">Portraits</div>
+                <div class="style-card" data-filter="femmes">Femmes</div>
+                <div class="style-card" data-filter="fashions">Fashions</div>
+                <div class="style-card" data-filter="hommes">Hommes</div>
+                <div class="style-card" data-filter="sports">Sports</div>
                 </div>
-                <div class="style-card" data-filter="3d">
-                    <span class="style-icon">3</span>D
-                </div>
-                <div class="style-card" data-filter="affiches">
-                    <span class="style-icon">A</span>ffiches
-                </div>
-                <div class="style-card" data-filter="animaux">
-                    <span class="style-icon">A</span>nimaux
-                </div>
-                <div class="style-card" data-filter="animes">
-                    <span class="style-icon">A</span>nimes/Mangas
-                </div>
-                <div class="style-card" data-filter="anniversaires">
-                    <span class="style-icon">A</span>nniversaires
-                </div>
-                <div class="style-card" data-filter="beautés">
-                    <span class="style-icon">B</span>eautés
-                </div>
-                <div class="style-card" data-filter="caricatures">
-                    <span class="style-icon">C</span>aricatures
-                </div>
-                <div class="style-card" data-filter="cinematiques">
-                    <span class="style-icon">C</span>inématiques
-                </div>
-                <div class="style-card" data-filter="couples">
-                    <span class="style-icon">C</span>ouples
-                </div>
-                <div class="style-card" data-filter="hommes">
-                    <span class="style-icon">H</span>ommes
-                </div>
-                <div class="style-card" data-filter="familles">
-                    <span class="style-icon">F</span>amilles
-                </div>
-                <div class="style-card" data-filter="fashions">
-                    <span class="style-icon">F</span>ashions
-                </div>
-                <div class="style-card" data-filter="femmes">
-                    <span class="style-icon">F</span>emmes
-                </div>
-                <div class="style-card" data-filter="paysages">
-                    <span class="style-icon">P</span>aysages
-                </div>
-                <div class="style-card" data-filter="portraits">
-                    <span class="style-icon">P</span>ortraits
-                </div>
-                <div class="style-card" data-filter="magazines">
-                    <span class="style-icon">M</span>agazines
-                </div>
-                <div class="style-card" data-filter="rétros">
-                    <span class="style-icon">R</span>étros
-                </div>
-                <div class="style-card" data-filter="sports">
-                    <span class="style-icon">S</span>ports
-                </div>
-                <div class="style-card" data-filter="studios">
-                    <span class="style-icon">S</span>tudios
-                </div>
-            </div>
         </nav>
 
-        <main class="prompts-grid" id="grid">
-            </main>
+        <main class="prompts-grid" id="grid"></main>
+    </div>
+
+    <div id="promptModal" class="modal">
+        <div class="modal-container">
+            <span class="modal-close">&times;</span>
+            
+            <div class="modal-slider-wrapper">
+                <button id="prevImg" class="slider-btn">❮</button>
+                <img id="modalImg" src="" class="modal-img-main">
+                <button id="nextImg" class="slider-btn">❯</button>
+            </div>
+
+            <div id="thumbnailContainer" class="thumbnail-list"></div>
+
+            <div class="modal-body">
+                <h2 id="modalTitle"></h2>
+                <div id="modalDescription"></div>
+                <button id="modalCopyBtn" class="btn-copy">Copier le prompt complet</button>
+            </div>
+        </div>
     </div>
 
     <div id="adminPanel" class="modal">
@@ -103,38 +69,26 @@
                 <h2 id="adminModalTitle">Gestion Database</h2>
                 
                 <div class="admin-form" id="adminForm">
-                    <input type="text" id="adminTitle" placeholder="Titre">
-                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
-                    <input type="text" id="adminImg" placeholder="Lien image">
+                    <input type="text" id="adminTitle" placeholder="TITRE DU PROMPT">
+                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d femmes)">
+                    <textarea id="adminImg" placeholder="Liens images (un lien par ligne)" rows="3"></textarea>
                     <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="5"></textarea>
-                    <button id="btnSaveAction" class="btn-copy">Enregistrer</button>
+                    <button id="btnSaveAction" class="btn-copy">Générer le code</button>
                 </div>
 
                 <div id="generatedCodeSection" style="display:none; margin-top: 15px;">
                     <p style="color: var(--accent-color); font-size: 0.8rem; margin-bottom: 8px;">
-                        ⚠️ Copiez ce code et remplacez TOUT le contenu de <strong>database.js</strong> :
+                        ⚠️ Remplacez le contenu de <strong>database.js</strong> par ceci :
                     </p>
                     <textarea id="generatedCode" readonly onclick="this.select()"></textarea>
-                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code Database</button>
+                    <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top: 10px;">Copier le code</button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="promptModal" class="modal">
-        <div class="modal-container">
-            <span class="modal-close">&times;</span>
-            <img id="modalImg" src="" class="modal-img">
-            <div class="modal-body">
-                <h2 id="modalTitle"></h2>
-                <div id="modalDescription"></div>
-                <button id="modalCopyBtn" class="btn-copy">Copier le prompt complet</button>
             </div>
         </div>
     </div>
 
     <button id="openAdmin" class="btn-admin-float">+</button>
-    <button id="closeAdminMode" class="btn-admin-float btn-exit-admin" style="display: none;">✕</button>
+    <button id="closeAdminMode" class="btn-admin-float btn-exit-admin">✕</button>
 
     <script src="database.js"></script>
     <script src="script.js"></script>

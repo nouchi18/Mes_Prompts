@@ -12,22 +12,37 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let currentEditingCard = null;
 
-    // --- 1. FONCTIONS DE BASE ---
+    // --- 1. UTILITAIRES ---
+
+    // Supprime les accents et met en minuscule pour une recherche robuste
+    const normalizeText = (text) => {
+        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    };
+
     const updateStats = () => {
         const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
+    // --- 2. FILTRAGE ET RECHERCHE ---
+
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
-        const term = searchInput.value.toLowerCase();
+        
+        // Sépare la saisie en plusieurs mots (recherche croisée)
+        const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
         
         document.querySelectorAll('.card').forEach(card => {
-            const styles = card.getAttribute('data-style').toLowerCase();
-            const content = card.innerText.toLowerCase();
-            const matchesStyle = activeStyle === "all" || styles.includes(activeStyle);
-            const matchesSearch = term === "" || content.includes(term);
+            const cardStyles = card.getAttribute('data-style').toLowerCase();
+            const cardContent = normalizeText(card.innerText);
+            
+            // Vérification du bouton de style
+            const matchesStyle = activeStyle === "all" || cardStyles.includes(activeStyle);
+            
+            // Vérification croisée : CHAQUE mot recherché doit être présent
+            const matchesSearch = searchTerms.every(term => cardContent.includes(term));
+
             card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
         });
         updateStats();
@@ -43,7 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // --- 2. GÉNÉRATION DE LA GRILLE ---
+    // --- 3. GÉNÉRATION DE L'INTERFACE ---
+
     const createCardElement = (data) => {
         const card = document.createElement('article');
         card.className = 'card';
@@ -69,18 +85,24 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 3. GALERIE MODALE ---
+    // --- 4. GESTION DE LA MODALE ET GALERIE ---
+
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
-        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
-        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
+        const modalImg = document.getElementById('modalImg');
+        modalImg.src = currentGalleryImages[currentImgIndex];
+        
+        document.querySelectorAll('.thumb').forEach((t, i) => {
+            t.classList.toggle('active', i === currentImgIndex);
+        });
     };
 
-    // --- 4. ÉVÉNEMENTS ---
+    // --- 5. GESTIONNAIRES D'ÉVÉNEMENTS ---
+
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // Ouvrir Modale
+        // OUVERTURE DE LA MODALE
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
@@ -91,7 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Titre
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // Badges de Style cliquables
+            // Badges de Style dynamiques et cliquables
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
             
@@ -104,7 +126,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 const badge = document.createElement('button');
                 badge.className = 'modal-badge';
                 badge.innerText = `# ${s}`;
-                badge.onclick = () => {
+                badge.onclick = (event) => {
+                    event.stopPropagation();
                     document.getElementById('promptModal').style.display = 'none';
                     activateFilter(s.toLowerCase());
                 };
@@ -112,11 +135,12 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             modalBody.insertBefore(stylesWrapper, modalDesc);
 
-            // Description & Galerie
+            // Description
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
+            
+            // Miniatures
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
-            
             if (currentGalleryImages.length > 1) {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'block');
                 currentGalleryImages.forEach((src, i) => {
@@ -128,33 +152,38 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
+            
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // Bouton Copier
+        // COPIE DU PROMPT
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
                 e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             
             navigator.clipboard.writeText(text).then(() => {
-                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
-                setTimeout(() => b.innerText = old, 2000);
+                const b = e.target; 
+                const oldText = b.innerText; 
+                b.innerText = "✓ Copié !";
+                setTimeout(() => b.innerText = oldText, 2000);
             });
         }
 
-        // Fermeture
+        // FERMETURE DES MODALES
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
     });
 
-    // Navigation Galerie
+    // Navigation Galerie (Flèches)
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // Filtres barre latérale
+    // Recherche et Filtres boutons
+    searchInput.addEventListener('input', filterLibrary);
+    
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -163,6 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    searchInput.addEventListener('input', filterLibrary);
+    // Initialisation
     renderLibrary();
 });

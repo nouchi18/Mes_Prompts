@@ -12,40 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let currentEditingCard = null;
 
-    // --- 1. GÉNÉRATION GRILLE ---
-    const renderLibrary = () => {
-        grid.innerHTML = "";
-        promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
-        updateStats();
-    };
-
-    const createCardElement = (data) => {
-        const card = document.createElement('article');
-        card.className = 'card';
-        card.setAttribute('data-style', data.styles);
-        const mainImg = Array.isArray(data.img) ? data.img[0] : data.img;
-        const allImgs = Array.isArray(data.img) ? data.img.join(',') : data.img;
-
-        card.innerHTML = `
-            <img src="${mainImg}" class="card-img" data-all-imgs="${allImgs}">
-            <div class="card-content">
-                <div class="card-header">${data.title}</div>
-                <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
-                <div class="full-prompt-hidden" style="display:none;">${data.prompt}</div>
-                <button class="btn-copy">Copier</button>
-            </div>
-        `;
-        return card;
-    };
-
-    // --- 2. GESTION GALERIE ---
-    const updateGalleryImage = (index) => {
-        currentImgIndex = index;
-        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
-        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
-    };
-
-    // --- 3. RECHERCHE ET FILTRES ---
+    // --- 1. FONCTIONS DE BASE ---
     const updateStats = () => {
         const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
@@ -66,96 +33,67 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 4. MODE ADMIN ---
-    document.addEventListener('keydown', e => {
-        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-        if (e.key.toLowerCase() === 'm' && prompt("Accès Admin :") === "1234") toggleAdminUI(true);
-    });
-
-    const toggleAdminUI = show => {
-        document.querySelectorAll('.card').forEach(card => {
-            let controls = card.querySelector('.admin-controls');
-            if (show) {
-                if (!controls) {
-                    controls = document.createElement('div');
-                    controls.className = 'admin-controls';
-                    controls.innerHTML = `<button class="btn-edit-card">MODIFIER</button><button class="btn-delete-card">SUPPRIMER</button>`;
-                    
-                    controls.querySelector('.btn-edit-card').onclick = ev => {
-                        ev.stopPropagation();
-                        currentEditingCard = card;
-                        adminForm.style.display = 'block';
-                        document.getElementById('adminTitle').value = card.querySelector('.card-header').innerText;
-                        document.getElementById('adminStyles').value = card.getAttribute('data-style');
-                        document.getElementById('adminImg').value = card.querySelector('.card-img').getAttribute('data-all-imgs');
-                        document.getElementById('adminPrompt').value = card.querySelector('.full-prompt-hidden').innerText;
-                        adminPanel.style.display = 'block';
-                    };
-                    controls.querySelector('.btn-delete-card').onclick = ev => {
-                        ev.stopPropagation();
-                        if(confirm("Supprimer ?")) { card.remove(); generateNewDatabaseCode(); }
-                    };
-                    card.appendChild(controls);
-                }
-                controls.style.display = 'flex';
-            } else if (controls) controls.style.display = 'none';
-        });
-        closeAdminModeBtn.style.display = show ? "flex" : "none";
+    const activateFilter = (filterValue) => {
+        const targetBtn = document.querySelector(`.style-card[data-filter="${filterValue}"]`);
+        if (targetBtn) {
+            document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            filterLibrary();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 
-    const generateNewDatabaseCode = (newItem = null) => {
-        const currentData = [];
-        let items = document.querySelectorAll('.card');
-        
-        items.forEach(card => {
-            if (currentEditingCard === card && newItem) {
-                currentData.push(newItem);
-            } else {
-                const imgAttr = card.querySelector('.card-img').getAttribute('data-all-imgs');
-                currentData.push({
-                    title: card.querySelector('.card-header').innerText,
-                    styles: card.getAttribute('data-style'),
-                    img: imgAttr.includes(',') ? imgAttr.split(',') : [imgAttr],
-                    prompt: card.querySelector('.full-prompt-hidden').innerText
-                });
-            }
-        });
-        
-        if (newItem && !currentEditingCard) currentData.push(newItem);
+    // --- 2. GÉNÉRATION DE LA GRILLE ---
+    const createCardElement = (data) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.setAttribute('data-style', data.styles);
+        const mainImg = Array.isArray(data.img) ? data.img[0] : data.img;
+        const allImgs = Array.isArray(data.img) ? data.img.join(',') : data.img;
 
-        genCodeArea.value = `const promptDatabase = ${JSON.stringify(currentData, null, 4)};`;
-        genCodeSection.style.display = 'block';
-        adminForm.style.display = 'none';
+        card.innerHTML = `
+            <img src="${mainImg}" class="card-img" data-all-imgs="${allImgs}">
+            <div class="card-content">
+                <div class="card-header">${data.title}</div>
+                <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
+                <div class="full-prompt-hidden" style="display:none;">${data.prompt}</div>
+                <button class="btn-copy">Copier</button>
+            </div>
+        `;
+        return card;
     };
 
-    // --- 5. ÉVÉNEMENTS ---
-    document.getElementById('btnSaveAction').onclick = () => {
-        const imgInput = document.getElementById('adminImg').value;
-        generateNewDatabaseCode({
-            title: document.getElementById('adminTitle').value.toUpperCase(),
-            styles: document.getElementById('adminStyles').value.toLowerCase(),
-            img: imgInput.split(',').map(s => s.trim()),
-            prompt: document.getElementById('adminPrompt').value
-        });
+    const renderLibrary = () => {
+        grid.innerHTML = "";
+        promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
+        updateStats();
     };
 
+    // --- 3. GALERIE MODALE ---
+    const updateGalleryImage = (index) => {
+        currentImgIndex = index;
+        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
+        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
+    };
+
+    // --- 4. ÉVÉNEMENTS ---
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
+        // Ouvrir Modale
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
-            currentImgIndex = 0;
-
+            
             const modalBody = document.querySelector('.modal-right .modal-body');
             const modalDesc = document.getElementById('modalDescription');
             
             // Titre
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // --- GESTION DES BADGES DE STYLE ---
+            // Badges de Style cliquables
             let stylesWrapper = modalBody.querySelector('.styles-grid');
-            if (stylesWrapper) stylesWrapper.remove(); // On nettoie l'existant
+            if (stylesWrapper) stylesWrapper.remove();
             
             stylesWrapper = document.createElement('div');
             stylesWrapper.className = 'styles-grid';
@@ -163,17 +101,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const styles = card.getAttribute('data-style').split(' ');
             styles.forEach(s => {
                 if(s.trim() === "") return;
-                const badge = document.createElement('div');
-                badge.className = 'style-card';
+                const badge = document.createElement('button');
+                badge.className = 'modal-badge';
                 badge.innerText = `# ${s}`;
+                badge.onclick = () => {
+                    document.getElementById('promptModal').style.display = 'none';
+                    activateFilter(s.toLowerCase());
+                };
                 stylesWrapper.appendChild(badge);
             });
             modalBody.insertBefore(stylesWrapper, modalDesc);
 
-            // Description
+            // Description & Galerie
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
-            
-            // Galerie
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             
@@ -188,11 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
-            
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }
 
+        // Bouton Copier
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -204,42 +144,25 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Fermeture
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
-        if (e.target.id === 'closeAdmin' || e.target.id === 'adminPanel') {
-            adminPanel.style.display = 'none';
-        }
     });
 
+    // Navigation Galerie
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
-    
-    document.getElementById('btnCopyDB').onclick = () => {
-        navigator.clipboard.writeText(genCodeArea.value).then(() => { 
-            alert("Database copiée ! Remplacez le contenu de database.js"); 
-            location.reload(); 
-        });
-    };
 
-    searchInput.addEventListener('input', filterLibrary);
-    
-    document.querySelectorAll('.style-card').forEach(b => {
-        b.onclick = () => {
+    // Filtres barre latérale
+    document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
+        btn.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-            b.classList.add('active'); 
+            btn.classList.add('active');
             filterLibrary();
         };
     });
 
-    document.getElementById('openAdmin').onclick = () => {
-        currentEditingCard = null; 
-        adminForm.style.display='block';
-        genCodeSection.style.display = 'none';
-        ['adminTitle','adminStyles','adminImg','adminPrompt'].forEach(id => document.getElementById(id).value = "");
-        adminPanel.style.display='block';
-    };
-
-    closeAdminModeBtn.onclick = () => toggleAdminUI(false);
+    searchInput.addEventListener('input', filterLibrary);
     renderLibrary();
 });

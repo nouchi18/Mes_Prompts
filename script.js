@@ -21,24 +21,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // --- 2. FILTRAGE ET RECHERCHE ---
     const filterLibrary = () => {
-        // On récupère le bouton de style actuellement actif (action précédente conservée)
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
         
-        // On récupère les termes de recherche
         const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
         
         document.querySelectorAll('.card').forEach(card => {
             const cardStyles = card.getAttribute('data-style').toLowerCase();
             const cardContent = normalizeText(card.innerText);
             
-            // Condition 1: Le style doit correspondre au bouton actif
             const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
-            
-            // Condition 2: Le contenu doit inclure tous les mots tapés
             const matchesSearch = searchTerms.every(term => cardContent.includes(term));
 
-            // On affiche si les DEUX conditions sont remplies
             card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
         });
         updateStats();
@@ -47,9 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const activateFilter = (filterValue) => {
         const targetBtn = document.querySelector(`.style-card[data-filter="${filterValue}"]`);
         if (targetBtn) {
+            // RÉINITIALISATION DE LA BARRE DE RECHERCHE
+            searchInput.value = ""; 
+            
             document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
             targetBtn.classList.add('active');
-            // On lance le filtrage (qui prendra en compte le texte actuel de l'input s'il y en a)
             filterLibrary();
         }
     };
@@ -157,27 +153,32 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // NAVIGATION GALERIE
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // --- GESTION RECHERCHE (TOUCHE ENTRÉE) ---
+    // --- RECHERCHE (TOUCHE ENTRÉE) ---
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Empêche le rechargement de la page si dans un formulaire
+            e.preventDefault();
+            // Quand on utilise la recherche, on remet le filtre style sur "Tous" (# Tous)
+            const allBtn = document.querySelector('.style-card[data-filter="all"]');
+            if (allBtn) {
+                document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
+                allBtn.classList.add('active');
+            }
             filterLibrary();
         }
     });
 
-    // Optionnel: On peut aussi garder la recherche en direct mais la rendre plus fluide
-    // searchInput.addEventListener('input', filterLibrary); 
-
-    // BOUTONS DE STYLE
+    // --- BOUTONS DE STYLE ---
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
+            // RÉINITIALISATION DE LA BARRE DE RECHERCHE AU CLIC SUR UN STYLE
+            searchInput.value = ""; 
+            
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
             btn.classList.add('active');
-            filterLibrary(); // Utilise le style sélectionné + le texte déjà présent dans l'input
+            filterLibrary();
         };
     });
 

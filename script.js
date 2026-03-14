@@ -19,21 +19,32 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. FILTRAGE ET RECHERCHE ---
+    // --- 2. FILTRAGE ET RECHERCHE CROISÉE ---
     const filterLibrary = () => {
+        // On récupère le filtre actif
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
         
-        const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
+        // On récupère les mots de la recherche (en ignorant les espaces vides)
+        const rawSearch = searchInput.value;
+        const searchTerms = normalizeText(rawSearch).trim().split(/\s+/).filter(t => t !== "");
         
         document.querySelectorAll('.card').forEach(card => {
             const cardStyles = card.getAttribute('data-style').toLowerCase();
             const cardContent = normalizeText(card.innerText);
             
+            // Condition 1 : Est-ce que ça correspond au style sélectionné ?
             const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
+            
+            // Condition 2 : Est-ce que ça contient TOUS les mots tapés ?
             const matchesSearch = searchTerms.every(term => cardContent.includes(term));
 
-            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
+            // Affichage si les deux conditions sont vraies
+            if (matchesStyle && matchesSearch) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
         });
         updateStats();
     };
@@ -41,9 +52,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const activateFilter = (filterValue) => {
         const targetBtn = document.querySelector(`.style-card[data-filter="${filterValue}"]`);
         if (targetBtn) {
-            // RÉINITIALISATION DE LA BARRE DE RECHERCHE
-            searchInput.value = ""; 
-            
             document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
             targetBtn.classList.add('active');
             filterLibrary();
@@ -89,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
+        // Clic sur une carte (ouverture modale)
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
@@ -97,6 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const modalDesc = document.getElementById('modalDescription');
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
+            // Badges cliquables dans la modale
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
             stylesWrapper = document.createElement('div');
@@ -119,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
+            // Galerie miniatures
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -136,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
+        // Copie
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -148,34 +160,22 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Fermeture modale
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
     });
 
+    // Navigation galerie
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // --- RECHERCHE (TOUCHE ENTRÉE) ---
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            // Quand on utilise la recherche, on remet le filtre style sur "Tous" (# Tous)
-            const allBtn = document.querySelector('.style-card[data-filter="all"]');
-            if (allBtn) {
-                document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-                allBtn.classList.add('active');
-            }
-            filterLibrary();
-        }
-    });
-
-    // --- BOUTONS DE STYLE ---
+    // Recherche Input
+    searchInput.addEventListener('input', filterLibrary);
+    
+    // Boutons de style
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
-            // RÉINITIALISATION DE LA BARRE DE RECHERCHE AU CLIC SUR UN STYLE
-            searchInput.value = ""; 
-            
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
             btn.classList.add('active');
             filterLibrary();

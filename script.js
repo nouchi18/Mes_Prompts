@@ -2,94 +2,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
-    const promptModal = document.getElementById('promptModal');
+    const adminPanel = document.getElementById('adminPanel');
+    const genCodeArea = document.getElementById('generatedCode');
+    const closeAdminModeBtn = document.getElementById('closeAdminMode');
+    const adminForm = document.getElementById('adminForm');
+    const genCodeSection = document.getElementById('generatedCodeSection');
     
     let currentGalleryImages = [];
     let currentImgIndex = 0;
-    let searchTimeout; // Pour stabiliser la saisie rapide
+    let currentEditingCard = null;
 
-    // --- 1. UTILITAIRES ---
-    const normalizeText = (text) => {
-        if (!text) return "";
-        return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    // --- 1. GÉNÉRATION GRILLE ---
+    const renderLibrary = () => {
+        grid.innerHTML = "";
+        promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
+        updateStats();
     };
 
-    const updateStats = () => {
-        const allCards = document.querySelectorAll('.card');
-        const visibleCards = Array.from(allCards).filter(c => c.style.display !== "none");
-        counter.innerText = `${visibleCards.length} Prompt(s) affiché(s)`;
-    };
-
-    // --- 2. FILTRAGE PRINCIPAL ---
-    const filterLibrary = () => {
-        const activeBtn = document.querySelector('.style-card.active');
-        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
-        
-        // On nettoie la recherche
-        const query = normalizeText(searchInput.value).trim();
-        const searchTerms = query.split(/\s+/).filter(t => t !== "");
-        
-        const allCards = document.querySelectorAll('.card');
-        
-        // On utilise requestAnimationFrame pour un rendu visuel fluide sans saccade
-        requestAnimationFrame(() => {
-            allCards.forEach(card => {
-                const cardStyles = (card.getAttribute('data-style') || "").toLowerCase();
-                const cardContent = normalizeText(card.innerText);
-                
-                const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
-                const matchesSearch = searchTerms.every(term => cardContent.includes(term));
-
-                card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
-            });
-            updateStats();
-        });
-    };
-
-    // --- 3. ACTIONS DE RECHERCHE ---
-
-    // Gère la saisie de texte
-    searchInput.addEventListener('input', () => {
-        clearTimeout(searchTimeout);
-        
-        // On remet le filtre sur "Tous" immédiatement si on écrit
-        if (searchInput.value.trim() !== "") {
-            const allBtn = document.querySelector('.style-card[data-filter="all"]');
-            if (allBtn && !allBtn.classList.contains('active')) {
-                document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-                allBtn.classList.add('active');
-            }
-        }
-
-        // On attend un tout petit peu que la saisie soit finie (évite le 1 fois sur 2)
-        searchTimeout = setTimeout(filterLibrary, 10);
-    });
-
-    // Gère la touche Entrée (Bloque le bug du flash/disparition)
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault(); 
-            e.stopPropagation();
-            filterLibrary();
-            return false;
-        }
-    });
-
-    // --- 4. BOUTONS DE STYLE ---
-    document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.preventDefault();
-            // On vide la recherche
-            searchInput.value = ""; 
-            // On change l'apparence
-            document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-            btn.classList.add('active');
-            // On filtre
-            filterLibrary();
-        });
-    });
-
-    // --- 5. INITIALISATION ET MODALE ---
     const createCardElement = (data) => {
         const card = document.createElement('article');
         card.className = 'card';
@@ -109,59 +38,84 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    const renderLibrary = () => {
-        grid.innerHTML = "";
-        if (typeof promptDatabase !== 'undefined') {
-            promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
-        }
+    // --- 2. GESTION GALERIE ---
+    const updateGalleryImage = (index) => {
+        currentImgIndex = index;
+        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
+        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
+    };
+
+    // --- 3. RECHERCHE ET FILTRES ---
+    const updateStats = () => {
+        const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
+        counter.innerText = `${visible} Prompt(s) affiché(s)`;
+    };
+
+    const filterLibrary = () => {
+        const activeBtn = document.querySelector('.style-card.active');
+        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
+        const term = searchInput.value.toLowerCase();
+        
+        document.querySelectorAll('.card').forEach(card => {
+            const styles = card.getAttribute('data-style').toLowerCase();
+            const content = card.innerText.toLowerCase();
+            const matchesStyle = (activeStyle === "all" || styles.includes(activeStyle));
+            const matchesSearch = (term === "" || content.includes(term));
+            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
+        });
         updateStats();
     };
 
-    // Fonctions Modale (Minimalistes pour éviter les bugs)
-    const updateGalleryImage = (index) => {
-        currentImgIndex = index;
-        const modalImg = document.getElementById('modalImg');
-        if (modalImg && currentGalleryImages[index]) {
-            modalImg.src = currentGalleryImages[index];
-            document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === index));
+    // Fonction pour activer un filtre depuis l'extérieur (ex: depuis la modale)
+    const activateFilter = (filterName) => {
+        const targetBtn = document.querySelector(`.style-card[data-filter="${filterName}"]`);
+        if (targetBtn) {
+            document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
+            targetBtn.classList.add('active');
+            filterLibrary();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
+    // --- 4. ÉVÉNEMENTS CLICS ---
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
+        // OUVERTURE MODALE
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
             
             const modalBody = document.querySelector('.modal-right .modal-body');
             const modalDesc = document.getElementById('modalDescription');
+            
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
+            // Génération des Badges de Style cliquables
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
+            
             stylesWrapper = document.createElement('div');
             stylesWrapper.className = 'styles-grid';
             
             const styles = card.getAttribute('data-style').split(' ');
             styles.forEach(s => {
                 if(s.trim() === "") return;
-                const badge = document.createElement('button');
-                badge.className = 'modal-badge';
+                const badge = document.createElement('button'); // Changé en bouton
+                badge.className = 'style-card modal-badge';
                 badge.innerText = `# ${s}`;
-                badge.onclick = (ev) => {
-                    ev.stopPropagation();
-                    promptModal.style.display = 'none';
-                    searchInput.value = "";
-                    const target = document.querySelector(`.style-card[data-filter="${s.toLowerCase()}"]`);
-                    if(target) target.click();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                // Action : Fermer modale et filtrer
+                badge.onclick = () => {
+                    document.getElementById('promptModal').style.display = 'none';
+                    activateFilter(s.toLowerCase());
                 };
                 stylesWrapper.appendChild(badge);
             });
             modalBody.insertBefore(stylesWrapper, modalDesc);
+
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
+            // Thumbnails
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -175,30 +129,38 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
+            
             updateGalleryImage(0);
-            promptModal.style.display = 'flex';
+            document.getElementById('promptModal').style.display = 'flex';
         }
 
+        // COPIE TEXTE
         if (e.target.classList.contains('btn-copy')) {
-            const isModal = e.target.id === "modalCopyBtn";
-            const text = isModal ? 
+            const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
                 e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             
             navigator.clipboard.writeText(text).then(() => {
-                const b = e.target; const old = b.innerText;
-                b.innerText = "✓ Copié !";
+                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
                 setTimeout(() => b.innerText = old, 2000);
             });
         }
 
+        // FERMETURE MODALES
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
-            promptModal.style.display = 'none';
+            document.getElementById('promptModal').style.display = 'none';
         }
     });
 
-    document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
-    document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
+    // Filtres de la page principale
+    document.querySelectorAll('.style-card[data-filter]').forEach(b => {
+        b.onclick = () => {
+            document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
+            b.classList.add('active'); 
+            filterLibrary();
+        };
+    });
 
+    searchInput.addEventListener('input', filterLibrary);
     renderLibrary();
 });

@@ -19,32 +19,27 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. FILTRAGE ET RECHERCHE CROISÉE ---
+    // --- 2. FILTRAGE ET RECHERCHE ---
     const filterLibrary = () => {
-        // On récupère le filtre actif
+        // On récupère le bouton de style actuellement actif (action précédente conservée)
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
         
-        // On récupère les mots de la recherche (en ignorant les espaces vides)
-        const rawSearch = searchInput.value;
-        const searchTerms = normalizeText(rawSearch).trim().split(/\s+/).filter(t => t !== "");
+        // On récupère les termes de recherche
+        const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
         
         document.querySelectorAll('.card').forEach(card => {
             const cardStyles = card.getAttribute('data-style').toLowerCase();
             const cardContent = normalizeText(card.innerText);
             
-            // Condition 1 : Est-ce que ça correspond au style sélectionné ?
+            // Condition 1: Le style doit correspondre au bouton actif
             const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
             
-            // Condition 2 : Est-ce que ça contient TOUS les mots tapés ?
+            // Condition 2: Le contenu doit inclure tous les mots tapés
             const matchesSearch = searchTerms.every(term => cardContent.includes(term));
 
-            // Affichage si les deux conditions sont vraies
-            if (matchesStyle && matchesSearch) {
-                card.style.display = "block";
-            } else {
-                card.style.display = "none";
-            }
+            // On affiche si les DEUX conditions sont remplies
+            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
         });
         updateStats();
     };
@@ -54,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (targetBtn) {
             document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
             targetBtn.classList.add('active');
+            // On lance le filtrage (qui prendra en compte le texte actuel de l'input s'il y en a)
             filterLibrary();
         }
     };
@@ -97,7 +93,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // Clic sur une carte (ouverture modale)
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
@@ -106,7 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const modalDesc = document.getElementById('modalDescription');
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // Badges cliquables dans la modale
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
             stylesWrapper = document.createElement('div');
@@ -129,7 +123,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
-            // Galerie miniatures
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -147,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // Copie
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -160,25 +152,32 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Fermeture modale
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
     });
 
-    // Navigation galerie
+    // NAVIGATION GALERIE
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // Recherche Input
-    searchInput.addEventListener('input', filterLibrary);
-    
-    // Boutons de style
+    // --- GESTION RECHERCHE (TOUCHE ENTRÉE) ---
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Empêche le rechargement de la page si dans un formulaire
+            filterLibrary();
+        }
+    });
+
+    // Optionnel: On peut aussi garder la recherche en direct mais la rendre plus fluide
+    // searchInput.addEventListener('input', filterLibrary); 
+
+    // BOUTONS DE STYLE
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
             btn.classList.add('active');
-            filterLibrary();
+            filterLibrary(); // Utilise le style sélectionné + le texte déjà présent dans l'input
         };
     });
 

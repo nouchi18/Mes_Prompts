@@ -5,16 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const adminPanel = document.getElementById('adminPanel');
     const genCodeArea = document.getElementById('generatedCode');
     const closeAdminModeBtn = document.getElementById('closeAdminMode');
-    const adminForm = document.getElementById('adminForm');
-    const genCodeSection = document.getElementById('generatedCodeSection');
     
     let currentGalleryImages = [];
     let currentImgIndex = 0;
-    let currentEditingCard = null;
 
     // --- 1. UTILITAIRES ---
-
-    // Supprime les accents et met en minuscule pour une recherche robuste
     const normalizeText = (text) => {
         return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     };
@@ -24,26 +19,32 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. FILTRAGE ET RECHERCHE ---
-
+    // --- 2. FILTRAGE ET RECHERCHE CROISÉE ---
     const filterLibrary = () => {
+        // On récupère le filtre actif
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
         
-        // Sépare la saisie en plusieurs mots (recherche croisée)
-        const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
+        // On récupère les mots de la recherche (en ignorant les espaces vides)
+        const rawSearch = searchInput.value;
+        const searchTerms = normalizeText(rawSearch).trim().split(/\s+/).filter(t => t !== "");
         
         document.querySelectorAll('.card').forEach(card => {
             const cardStyles = card.getAttribute('data-style').toLowerCase();
             const cardContent = normalizeText(card.innerText);
             
-            // Vérification du bouton de style
-            const matchesStyle = activeStyle === "all" || cardStyles.includes(activeStyle);
+            // Condition 1 : Est-ce que ça correspond au style sélectionné ?
+            const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
             
-            // Vérification croisée : CHAQUE mot recherché doit être présent
+            // Condition 2 : Est-ce que ça contient TOUS les mots tapés ?
             const matchesSearch = searchTerms.every(term => cardContent.includes(term));
 
-            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
+            // Affichage si les deux conditions sont vraies
+            if (matchesStyle && matchesSearch) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
         });
         updateStats();
     };
@@ -54,12 +55,10 @@ document.addEventListener("DOMContentLoaded", () => {
             document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
             targetBtn.classList.add('active');
             filterLibrary();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 
-    // --- 3. GÉNÉRATION DE L'INTERFACE ---
-
+    // --- 3. GÉNÉRATION INTERFACE ---
     const createCardElement = (data) => {
         const card = document.createElement('article');
         card.className = 'card';
@@ -81,42 +80,35 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const renderLibrary = () => {
         grid.innerHTML = "";
-        promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
+        if (typeof promptDatabase !== 'undefined') {
+            promptDatabase.forEach(data => grid.appendChild(createCardElement(data)));
+        }
         updateStats();
     };
 
-    // --- 4. GESTION DE LA MODALE ET GALERIE ---
-
+    // --- 4. GESTION MODALE ---
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
-        const modalImg = document.getElementById('modalImg');
-        modalImg.src = currentGalleryImages[currentImgIndex];
-        
-        document.querySelectorAll('.thumb').forEach((t, i) => {
-            t.classList.toggle('active', i === currentImgIndex);
-        });
+        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
+        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
     };
 
-    // --- 5. GESTIONNAIRES D'ÉVÉNEMENTS ---
-
+    // --- 5. ÉVÉNEMENTS ---
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // OUVERTURE DE LA MODALE
+        // Clic sur une carte (ouverture modale)
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
             
             const modalBody = document.querySelector('.modal-right .modal-body');
             const modalDesc = document.getElementById('modalDescription');
-            
-            // Titre
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // Badges de Style dynamiques et cliquables
+            // Badges cliquables dans la modale
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
-            
             stylesWrapper = document.createElement('div');
             stylesWrapper.className = 'styles-grid';
             
@@ -135,10 +127,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             modalBody.insertBefore(stylesWrapper, modalDesc);
 
-            // Description
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
-            // Miniatures
+            // Galerie miniatures
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -152,38 +143,37 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
-            
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // COPIE DU PROMPT
+        // Copie
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
                 e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             
             navigator.clipboard.writeText(text).then(() => {
-                const b = e.target; 
-                const oldText = b.innerText; 
+                const b = e.target; const oldText = b.innerText;
                 b.innerText = "✓ Copié !";
                 setTimeout(() => b.innerText = oldText, 2000);
             });
         }
 
-        // FERMETURE DES MODALES
+        // Fermeture modale
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
     });
 
-    // Navigation Galerie (Flèches)
+    // Navigation galerie
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // Recherche et Filtres boutons
+    // Recherche Input
     searchInput.addEventListener('input', filterLibrary);
     
+    // Boutons de style
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -192,6 +182,5 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    // Initialisation
     renderLibrary();
 });

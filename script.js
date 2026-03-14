@@ -3,17 +3,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
-    const adminPanel = document.getElementById('adminPanel');
-    const genCodeArea = document.getElementById('generatedCode');
-    const closeAdminModeBtn = document.getElementById('closeAdminMode');
+    const promptModal = document.getElementById('promptModal');
     
     let currentGalleryImages = [];
     let currentImgIndex = 0;
 
-    // --- 1. UTILITAIRES DE TEXTE ---
+    // --- 1. UTILITAIRES ---
+
+    // Normalise le texte (minuscules et suppression des accents)
     const normalizeText = (text) => {
         if (!text) return "";
-        // Supprime les accents et passe en minuscule pour une recherche fiable
         return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
     };
 
@@ -23,74 +22,74 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 2. LOGIQUE DE FILTRAGE ---
-    const filterLibrary = () => {
-        const activeBtn = document.querySelector('.style-card.active');
-        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
-        
-        // Préparation des termes de recherche (recherche croisée)
-        const searchTermRaw = searchInput.value;
-        const searchTerms = normalizeText(searchTermRaw).trim().split(/\s+/).filter(t => t !== "");
-        
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            const cardStyles = card.getAttribute('data-style').toLowerCase();
-            const cardContent = normalizeText(card.innerText);
-            
-            // Vérification du style (via bouton)
-            const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
-            
-            // Vérification des mots (via barre de recherche) : tous les mots doivent être présents
-            const matchesSearch = searchTerms.every(term => cardContent.includes(term));
-
-            // Application immédiate de l'affichage
-            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
-        });
-        updateStats();
-    };
-
     const resetStylesToAll = () => {
         const allBtn = document.querySelector('.style-card[data-filter="all"]');
         const currentActive = document.querySelector('.style-card.active');
-        
-        // On ne réinitialise que si on n'est pas déjà sur "Tous" pour éviter les calculs inutiles
         if (allBtn && currentActive !== allBtn) {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
             allBtn.classList.add('active');
         }
     };
 
-    // --- 3. GESTION DES ÉVÉNEMENTS DE RECHERCHE ---
-    
-    // Événement principal : chaque lettre tapée
+    // --- 2. LOGIQUE DE FILTRAGE ---
+
+    const filterLibrary = () => {
+        const activeBtn = document.querySelector('.style-card.active');
+        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
+        
+        // Recherche croisée : on sépare les mots de la barre de recherche
+        const searchTerms = normalizeText(searchInput.value).trim().split(/\s+/).filter(t => t !== "");
+        
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const cardStyles = card.getAttribute('data-style').toLowerCase();
+            const cardContent = normalizeText(card.innerText);
+            
+            const matchesStyle = (activeStyle === "all" || cardStyles.includes(activeStyle));
+            const matchesSearch = searchTerms.every(term => cardContent.includes(term));
+
+            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
+        });
+        updateStats();
+    };
+
+    const activateFilter = (filterValue) => {
+        const targetBtn = document.querySelector(`.style-card[data-filter="${filterValue}"]`);
+        if (targetBtn) {
+            searchInput.value = ""; // Vider la recherche lors d'un clic sur un style
+            document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
+            targetBtn.classList.add('active');
+            filterLibrary();
+        }
+    };
+
+    // --- 3. GESTION DES ÉVÉNEMENTS RECHERCHE ---
+
+    // Recherche en direct
     searchInput.addEventListener('input', () => {
-        // Si l'utilisateur commence à chercher, on annule le filtre par catégorie
         if (searchInput.value.trim() !== "") {
-            resetStylesToAll();
+            resetStylesToAll(); // Priorité à la recherche : on repasse sur "Tous"
         }
         filterLibrary();
     });
 
-    // Touche Entrée : Empêche le comportement par défaut et valide le filtre
+    // Gestion de la touche Entrée
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault();
+            e.preventDefault(); // EMPÊCHE LE RECHARGEMENT (FLASH) DE LA PAGE
             filterLibrary();
         }
     });
 
-    // Boutons de style de la page principale
+    // Filtres par boutons de la page
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.onclick = () => {
-            // Un clic sur un style vide la recherche textuelle
-            searchInput.value = ""; 
-            document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-            btn.classList.add('active');
-            filterLibrary();
+            activateFilter(btn.getAttribute('data-filter'));
         };
     });
 
     // --- 4. MODALE ET GALERIE ---
+
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
         const modalImg = document.getElementById('modalImg');
@@ -102,19 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    const activateFilterFromModal = (filterValue) => {
-        // On simule un clic sur le filtre de la page
-        const targetBtn = document.querySelector(`.style-card[data-filter="${filterValue}"]`);
-        if (targetBtn) {
-            searchInput.value = ""; 
-            document.querySelectorAll('.style-card').forEach(b => b.classList.remove('active'));
-            targetBtn.classList.add('active');
-            filterLibrary();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    };
-
-    // --- 5. INITIALISATION ET ACTIONS ---
     const createCardElement = (data) => {
         const card = document.createElement('article');
         card.className = 'card';
@@ -142,11 +128,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // Événement global pour les clics (Modale, Copie)
+    // Gestionnaire de clics globaux
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // Ouvrir la modale
+        // Ouvrir modale
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
@@ -155,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const modalDesc = document.getElementById('modalDescription');
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // Badges de style dans la modale
+            // Badges dynamiques dans la modale
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
             stylesWrapper = document.createElement('div');
@@ -169,8 +155,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 badge.innerText = `# ${s}`;
                 badge.onclick = (ev) => {
                     ev.stopPropagation();
-                    document.getElementById('promptModal').style.display = 'none';
-                    activateFilterFromModal(s.toLowerCase());
+                    promptModal.style.display = 'none';
+                    activateFilter(s.toLowerCase());
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 };
                 stylesWrapper.appendChild(badge);
             });
@@ -178,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
-            // Miniatures
+            // Miniatures galerie
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -193,10 +180,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
             updateGalleryImage(0);
-            document.getElementById('promptModal').style.display = 'flex';
+            promptModal.style.display = 'flex';
         }
 
-        // Action Copier
+        // Bouton copier
         if (e.target.classList.contains('btn-copy')) {
             const isModal = e.target.id === "modalCopyBtn";
             const text = isModal ? 
@@ -210,16 +197,15 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Fermeture Modale
+        // Fermeture modale
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
-            document.getElementById('promptModal').style.display = 'none';
+            promptModal.style.display = 'none';
         }
     });
 
-    // Flèches de navigation
+    // Navigation galerie
     document.querySelector('.prev-btn').onclick = () => updateGalleryImage((currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length);
     document.querySelector('.next-btn').onclick = () => updateGalleryImage((currentImgIndex + 1) % currentGalleryImages.length);
 
-    // Initialisation
     renderLibrary();
 });

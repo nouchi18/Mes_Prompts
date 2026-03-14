@@ -21,11 +21,15 @@
         </section>
 
         <div class="search-container">
-            <div class="search-wrapper">
-                <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher un mot, un style...">
-            </div>
-        </div>
+    <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Rechercher...">
+    </div>
+</div>
+
+<form onsubmit="event.preventDefault(); return false;">
+    <input type="text" id="searchInput" ...>
+</form>
 
         <nav class="styles-section">
             <div class="styles-grid">

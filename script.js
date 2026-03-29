@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
     const grid = document.getElementById('grid');
-    const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
     const adminPanel = document.getElementById('adminPanel');
     const openAdminBtn = document.getElementById('openAdmin');
@@ -14,7 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let isAdminMode = false;
 
-    // --- 1. GÉNÉRATION GRILLE ---
+    // --- AUTO TITRE ---
+    const autoGenerateTitle = (prompt) => {
+        const stopWords = ['un', 'une', 'le', 'la', 'les', 'de', 'du', 'des', 'au', 'aux', 'et', 'pour', 'avec', 'dans', 'sur'];
+        const words = prompt.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/);
+        const keywords = words.filter(word => word.length > 3 && !stopWords.includes(word));
+        return keywords.slice(0, 3).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ") || "NOUVEAU PROMPT";
+    };
+
+    // --- RENDU ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         if (typeof promptDatabase !== 'undefined') {
@@ -28,14 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
         card.className = 'card';
         card.setAttribute('data-style', data.styles);
         const mainImg = Array.isArray(data.img) ? data.img[0] : data.img;
-        const allImgs = Array.isArray(data.img) ? data.img.join(',') : data.img;
-
         card.innerHTML = `
             <div class="admin-controls" style="display: ${isAdminMode ? 'flex' : 'none'}">
                 <button class="btn-edit-card" data-idx="${index}">Modifier</button>
                 <button class="btn-delete-card" data-idx="${index}">Supprimer</button>
             </div>
-            <img src="${mainImg}" class="card-img" data-all-imgs="${allImgs}">
+            <img src="${mainImg}" class="card-img" data-all-imgs="${Array.isArray(data.img) ? data.img.join(',') : data.img}">
             <div class="card-content">
                 <div class="card-header">${data.title}</div>
                 <p class="prompt-text">${data.prompt.substring(0, 100)}...</p>
@@ -46,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. FILTRAGE ROBUSTE ---
+    // --- FILTRAGE STABLE ---
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter').toLowerCase() : "all";
@@ -57,101 +62,64 @@ document.addEventListener("DOMContentLoaded", () => {
             const cardTitle = card.querySelector('.card-header').innerText.toLowerCase();
             const cardPrompt = card.querySelector('.full-prompt-hidden').innerText.toLowerCase();
             
-            // On vérifie si la catégorie active correspond
-            const matchesCategory = (activeStyle === "all" || cardStyles.includes(activeStyle));
+            const matchesCat = (activeStyle === "all" || cardStyles.includes(activeStyle));
+            const matchesSearch = (term === "" || cardTitle.includes(term) || cardStyles.includes(term) || cardPrompt.includes(term));
             
-            // On vérifie si le texte cherché est présent PARTOUT (titre, tags ou texte du prompt)
-            const matchesSearch = (term === "" || 
-                                   cardTitle.includes(term) || 
-                                   cardStyles.includes(term) || 
-                                   cardPrompt.includes(term));
-            
-            card.style.display = (matchesCategory && matchesSearch) ? "block" : "none";
+            card.style.display = (matchesCat && matchesSearch) ? "block" : "none";
         });
         updateStats();
     };
 
     const updateStats = () => {
         const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
-        counter.innerText = `${visible} Prompt(s) affiché(s)`;
+        document.getElementById('counter').innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 3. CLAVIER (ENTRÉE & M) ---
+    // --- CLAVIER ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
-
         if (e.key.toLowerCase() === 'm' && !isTyping) {
             e.preventDefault();
             isAdminMode = !isAdminMode;
-            document.querySelectorAll('.admin-controls').forEach(ctrl => {
-                ctrl.style.display = isAdminMode ? 'flex' : 'none';
-            });
+            document.querySelectorAll('.admin-controls').forEach(c => c.style.display = isAdminMode ? 'flex' : 'none');
         }
-
         if (e.key === 'Enter' && e.target.id === 'searchInput') {
-            e.preventDefault(); // Stop le rechargement
+            e.preventDefault();
             filterLibrary();
         }
     });
 
-    // Reset si champ vidé
-    searchInput.addEventListener('input', () => { if (searchInput.value === "") filterLibrary(); });
-
-    // --- 4. ADMIN ---
-    openAdminBtn.onclick = () => { adminPanel.style.display = 'flex'; genCodeSection.style.display = 'none'; };
-    closeAdminBtn.onclick = () => { adminPanel.style.display = 'none'; };
-
+    // --- ADMIN ACTIONS ---
     btnSaveAction.onclick = () => {
+        const titleInput = document.getElementById('adminTitle');
+        const promptText = document.getElementById('adminPrompt').value;
+        let finalTitle = titleInput.value.trim() || autoGenerateTitle(promptText);
+        titleInput.value = finalTitle;
+
         const newPrompt = {
-            title: document.getElementById('adminTitle').value,
+            title: finalTitle.toUpperCase(),
             styles: document.getElementById('adminStyles').value,
             img: document.getElementById('adminImg').value.split(','),
-            prompt: document.getElementById('adminPrompt').value
+            prompt: promptText
         };
         genCodeArea.value = JSON.stringify(newPrompt, null, 4) + ",";
         genCodeSection.style.display = 'block';
     };
 
-    btnCopyDB.onclick = function() {
-        navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            const oldText = this.innerText;
-            this.innerText = "✓ Code copié !";
-            setTimeout(() => { this.innerText = oldText; }, 2000);
-        });
-    };
-
-    // --- 5. MODALE & GALERIE ---
-    const updateGalleryImage = (index) => {
-        if (!currentGalleryImages[index]) return;
-        currentImgIndex = index;
-        document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
-        document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
-    };
-
+    // --- CLICS GLOBAUX ---
     document.addEventListener('click', e => {
-        // Actions Admin (Edit/Delete)
-        if (e.target.classList.contains('btn-edit-card')) {
-            const data = promptDatabase[e.target.dataset.idx];
-            document.getElementById('adminTitle').value = data.title;
-            document.getElementById('adminStyles').value = data.styles;
-            document.getElementById('adminImg').value = data.img.join(',');
-            document.getElementById('adminPrompt').value = data.prompt;
-            adminPanel.style.display = 'flex';
-            return;
+        if (e.target.classList.contains('btn-copy')) {
+            const text = (e.target.id === "modalCopyBtn") ? document.getElementById('modalDescription').innerText : e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
+                setTimeout(() => b.innerText = old, 2000);
+            });
         }
-
-        if (e.target.classList.contains('btn-delete-card')) {
-            if(confirm("Supprimer ?")) {
-                promptDatabase.splice(e.target.dataset.idx, 1);
-                renderLibrary();
-                genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
-                genCodeSection.style.display = 'block';
-                adminPanel.style.display = 'flex';
-            }
-            return;
+        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
+            document.getElementById('promptModal').style.display = 'none';
+            adminPanel.style.display = 'none';
         }
-
-        // Ouverture modale
+        // Ouverture Modale
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -159,66 +127,30 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             
-            const thumbContainer = document.getElementById('modalThumbs');
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
+            prevBtn.style.display = nextBtn.style.display = (currentGalleryImages.length > 1) ? 'block' : 'none';
             
-            thumbContainer.innerHTML = "";
-
-            if (currentGalleryImages.length > 1) {
-                if (prevBtn) prevBtn.style.display = 'block';
-                if (nextBtn) nextBtn.style.display = 'block';
-                currentGalleryImages.forEach((src, i) => {
-                    const t = document.createElement('img');
-                    t.src = src; t.className = `thumb ${i===0?'active':''}`;
-                    t.onclick = () => updateGalleryImage(i);
-                    thumbContainer.appendChild(t);
-                });
-            } else {
-                if (prevBtn) prevBtn.style.display = 'none';
-                if (nextBtn) nextBtn.style.display = 'none';
-            }
-            
-            updateGalleryImage(0);
+            currentImgIndex = 0;
+            document.getElementById('modalImg').src = currentGalleryImages[0];
             document.getElementById('promptModal').style.display = 'flex';
         }
-
-        // Copie intelligente
-        if (e.target.classList.contains('btn-copy')) {
-            const text = (e.target.id === "modalCopyBtn") 
-                ? document.getElementById('modalDescription').innerText 
-                : e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
-
-            navigator.clipboard.writeText(text).then(() => {
-                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
-                setTimeout(() => b.innerText = old, 2000);
-            });
-        }
-
-        // Fermetures
-        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
-            document.getElementById('promptModal').style.display = 'none';
-            adminPanel.style.display = 'none';
-        }
-
-        // Navigation
+        // Navigation Galerie
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
-            updateGalleryImage(currentImgIndex);
+            document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
         }
         if (e.target.classList.contains('next-btn')) {
             currentImgIndex = (currentImgIndex + 1) % currentGalleryImages.length;
-            updateGalleryImage(currentImgIndex);
+            document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
         }
     });
 
-    // Catégories
-    document.querySelectorAll('.style-card[data-filter]').forEach(b => {
-        b.onclick = () => {
-            document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
-            b.classList.add('active'); 
-            filterLibrary();
-        };
+    openAdminBtn.onclick = () => { adminPanel.style.display = 'flex'; genCodeSection.style.display = 'none'; };
+    closeAdminBtn.onclick = () => { adminPanel.style.display = 'none'; };
+    document.querySelectorAll('.style-card').forEach(b => b.onclick = () => {
+        document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
+        b.classList.add('active'); filterLibrary();
     });
 
     renderLibrary();

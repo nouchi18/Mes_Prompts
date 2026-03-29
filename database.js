@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME STUDIO",
+    "styles": "femme fashion studio",
+    "img": [
+        "Images/IMG_20260329_221914.png"
+    ],
+    "prompt": "Réalisez un portrait de mode hyperréaliste et cinématographique en studio représentant une femme, en vous inspirant de la photo de référence fournie et en conservant son identité exacte, y compris ses lunettes et son piercing au nez, avec un éclairage coloré spectaculaire et une ambiance éditoriale raffinée. L'ambiance générale doit être artistique, soignée, moderne et haut de gamme, en mettant particulièrement l'accent sur l'éclairage, la pose, le stylisme et le réalisme photographique.\nLe sujet est en position accroupie sur le sol du studio, une jambe pliée vers le haut et l'autre repliée sous elle, dans une posture équilibrée et élégante. Sa posture doit être gracieuse, posée et avant-gardiste, sans être exagérée. Une main repose légèrement près de son cou ou de sa clavicule, tandis que l'autre bras est détendu naturellement près de sa jambe. Sa tête est légèrement tournée sur le côté, le regard dirigé vers le bas ou détourné de l'appareil photo pour une expression éditoriale contemplative. Son visage doit paraître calme, serein et légèrement expressif.\nLa tenue doit être un body de mode blanc ajusté et texturé, ou une pièce de scène d'inspiration couture avec des détails tissés ou en maille visibles, mais elle doit rester entièrement opaque et clairement stylisée comme un vêtement de haute couture plutôt que comme de la lingerie. La coupe doit présenter une silhouette à épaules dénudées avec un drapé souple autour des bras, de fines bretelles et une coupe sculptée au niveau du torse. Le tissu doit présenter une texture et un motif visibles, lui conférant une allure moderne de défilé. Composez le look comme une tenue éditoriale sophistiquée, aux formes marquées et élégantes. Elle porte des escarpins noirs à bride cheville, dotés d’un talon fin et d’un design épuré et minimaliste.\nLa coiffure doit être un carré court et ébouriffé, avec une texture douce, du volume et une finition éditoriale légèrement décoiffée. Le maquillage doit être audacieux et soigné, avec des lèvres bien dessinées, des pommettes légèrement sculptées, une peau lumineuse et un maquillage des yeux sombre, adapté à une séance photo dramatique en studio.\nL'éclairage est l'élément visuel principal. Utilisez un éclairage de studio bicolore puissant, avec une lumière rouge-orange chaude d'un côté du sujet et une lumière bleu cyan vive de l'autre. Les lumières colorées doivent créer un contraste cinématographique sur son visage, son corps et sa tenue, avec une lueur douce, une diffusion atmosphérique et une brume subtile dans l'air. L'éclairage doit être moderne, immersif et visuellement saisissant, à l'image d'une campagne de mode de luxe ou d'un éditorial de studio créatif.\nL'arrière-plan doit être sombre, minimaliste et épuré, avec un dégradé harmonieux de lumière colorée se fondant dans une brume douce. Le sol doit être visible sous elle et refléter une partie de l'éclairage coloré pour apporter de la profondeur et du réalisme. Gardez le décor simple afin que la composition reste centrée sur le sujet, le stylisme et l'éclairage spectaculaire.\nLa composition doit être verticale et en pied, montrant clairement la pose entière de la tête aux talons. Respectez une anatomie réaliste, des proportions naturelles et une texture de peau réaliste. Mettez l'accent sur le réalisme photographique, les détails précis du visage, la texture réaliste des tissus, l'éclairage cinématographique et une finition éditoriale haut de gamme.\nMots-clés de style : hyperréaliste, portrait de studio cinématographique, éclairage néon dramatique, éditorial de mode, stylisme haute couture, maquillage soigné, tissu texturé, esthétique de campagne de luxe, brume atmosphérique, texture de peau réaliste, portrait en pied, photographie de studio moderne.\nConsignes négatives : pas de nudité, pas de lingerie, pas de vêtements transparents, pas d'expression suggestive, pas d'anatomie exagérée, pas de mains déformées, pas de membres supplémentaires, pas de chaussures déformées, pas de look de dessin animé, pas d'illustration, pas de peau plastique, pas de style explicite ou provocateur.\nImage ratio : 2/3."
+},
+    {
     "title": "HOMME COMBAT",
     "styles": "homme cinématique ",
     "img": [
@@ -49,7 +57,7 @@ const promptDatabase = [
 },
     {
     "title": "BATTEUR GUERRIER NORDIQUE",
-    "styles": "homme cinematique",
+    "styles": "homme cinématique",
     "img": [
         "Images/13312.png"
     ],
@@ -83,7 +91,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT",
-        "styles": "portrait cinematique femme",
+        "styles": "portrait cinématique femme",
         "img": [
             "https://nouchi18.github.io/Mes_Prompts/Images/10683.png"
         ],

@@ -66,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // Fonction pour activer un filtre depuis l'extérieur (ex: depuis la modale)
     const activateFilter = (filterName) => {
         const targetBtn = document.querySelector(`.style-card[data-filter="${filterName}"]`);
         if (targetBtn) {
@@ -77,21 +76,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // --- 4. ÉVÉNEMENTS CLICS ---
+    // --- 4. GESTION ÉVÉNEMENTS RECHERCHE ---
+    // Déclenche la recherche sur Entrée
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            filterLibrary();
+        }
+    });
+
+    // Optionnel : réinitialise la recherche si le champ est vidé
+    searchInput.addEventListener('input', () => {
+        if (searchInput.value === "") {
+            filterLibrary();
+        }
+    });
+
+    // --- 5. ÉVÉNEMENTS CLICS ---
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // OUVERTURE MODALE
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
             
             const modalBody = document.querySelector('.modal-right .modal-body');
             const modalDesc = document.getElementById('modalDescription');
-            
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
 
-            // Génération des Badges de Style cliquables
             let stylesWrapper = modalBody.querySelector('.styles-grid');
             if (stylesWrapper) stylesWrapper.remove();
             
@@ -101,10 +112,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const styles = card.getAttribute('data-style').split(' ');
             styles.forEach(s => {
                 if(s.trim() === "") return;
-                const badge = document.createElement('button'); // Changé en bouton
+                const badge = document.createElement('button');
                 badge.className = 'style-card modal-badge';
                 badge.innerText = `# ${s}`;
-                // Action : Fermer modale et filtrer
                 badge.onclick = () => {
                     document.getElementById('promptModal').style.display = 'none';
                     activateFilter(s.toLowerCase());
@@ -112,10 +122,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 stylesWrapper.appendChild(badge);
             });
             modalBody.insertBefore(stylesWrapper, modalDesc);
-
             modalDesc.innerText = card.querySelector('.full-prompt-hidden').innerText;
             
-            // Thumbnails
             const thumbContainer = document.getElementById('modalThumbs');
             thumbContainer.innerHTML = "";
             if (currentGalleryImages.length > 1) {
@@ -134,7 +142,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // COPIE TEXTE
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -146,13 +153,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // FERMETURE MODALES
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
     });
 
-    // Filtres de la page principale
     document.querySelectorAll('.style-card[data-filter]').forEach(b => {
         b.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -161,6 +166,5 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    searchInput.addEventListener('input', filterLibrary);
     renderLibrary();
 });

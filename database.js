@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME DANS UN CHAMP DE FLEURES",
+    "styles": "femme paysage",
+    "img": [
+        "Images/IMG_20260329_222626.png"
+    ],
+    "prompt": "Sujet Principal: Une femme au look naturel et élégant.\nPose: Debout, de trois quarts, regardant directement l'objectif avec un léger sourire confiant. Les bras sont détendus, mains légèrement ouvertes vers le bas.\nTenue: Une robe longue rose vieux rose (poussiéreux). La robe est détaillée :\nHaut en dentelle florale complexe.\nCintré à la taille par une ceinture assortie en tissu.\nManches longues bouffantes (style évêque) en mousseline fluide, resserrées aux poignets.\nJupe plissée ou fluide en tissu lisse assorti.\nCoiffure et Maquillage: Cheveux longs, ondulés et bien coiffés, tombant sur ses épaules. Maquillage naturel, yeux mis en valeur, rouge à lèvres d'un rouge bordeaux/baie mat.\nArrière-plan (Scène): Un champ de fleurs sauvages mauves/violettes (probablement de la valériane rouge ou des fleurs de lin sauvage), s'étendant à perte de vue. Derrière le champ, des collines douces et des arbres.\nÉclairage (Lumière): L'heure dorée (coucher du soleil). La lumière est douce, chaude et latérale, venant de la droite, créant des reflets dorés dans ses cheveux et sur le champ. Le ciel est nuageux mais teinté d'or et de pourpre.\nPerspective: Prise de vue à hauteur d'œil, plan moyen.\nDétails/Texte: Un filigrane TikTok \"@kuksalmama\" est visible en bas à droite. Un petit logo en forme de losange est en bas à l'extrême droite. Ces détails doivent être exclus pour une génération propre.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME STUDIO",
     "styles": "femme fashion studio",
     "img": [

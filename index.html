@@ -51,7 +51,7 @@
     <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
-            <span class="modal-close" id="closeModal">&times;</span>
+            <span class="modal-close closeModal">&times;</span>
             <div class="modal-left">
                 <div class="modal-gallery-wrapper">
                     <button class="nav-btn prev-btn">&#10094;</button>
@@ -61,7 +61,7 @@
                 <div class="thumbnails-container" id="modalThumbs"></div>
             </div>
             <div class="modal-right">
-                <div class="modal-body">
+                <div class="modal-content-wrapper">
                     <h2 id="modalTitle"></h2>
                     <div id="modalDescription"></div>
                     <button id="modalCopyBtn" class="btn-copy">Copier le prompt complet</button>
@@ -70,17 +70,17 @@
         </div>
     </div>
 
-    <!-- Panneau Admin (Correction Pleine Largeur) -->
+    <!-- Panneau Admin -->
     <div id="adminPanel" class="modal">
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
-            <div class="modal-body" style="width: 100%;">
-                <h2 id="adminModalTitle" style="margin-bottom: 20px;">Gestion Database</h2>
+            <div class="modal-body">
+                <h2 style="margin-bottom: 20px;">Gestion Database</h2>
                 <div class="admin-form">
                     <input type="text" id="adminTitle" placeholder="Titre">
                     <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
                     <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
-                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="8"></textarea>
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..."></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>
                 <div id="generatedCodeSection" style="display:none; width: 100%; margin-top: 25px;">

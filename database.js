@@ -1,6 +1,6 @@
 const promptDatabase = [
     {
-    "title": "FEMME PORTRAIT FASHION",
+    "title": "FEMME PORTRAIT FASHIO",
     "styles": "femme portrait fashion",
     "img": [
         "Images/IMG_20260329_215803.png"

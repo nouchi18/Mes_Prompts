@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "",
+    "styles": "homme sport affiche",
+    "img": [
+        "Images/13306.png"
+    ],
+    "prompt": "Un joueur de football d’élite avec de la terre sur le visage et une expression intense, frappant la balle avec une puissance explosive, capturé dans une prise de vue en contre-plongée depuis le sol, prise sur ARRI Alexa 65, objectif 24 mm, photographie sportive cinématographique, sujet en netteté avec flou de mouvement dynamique, éclairage dramatique du stade, étalonnage cinématographique des couleurs dans les tons sarcelle et orange, composition de héros, style publicitaire sportif haut de gamme, ultra réaliste, 8k. Image ratio : 2/3."
+},
+    {
         "title": "CINEMATIC",
         "styles": "portrait caricature femme",
         "img": [

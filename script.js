@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Éléments DOM principaux
     const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. LOGIQUE DE FILTRAGE ---
+    // --- 2. LOGIQUE DE FILTRAGE & STATS ---
     const updateStats = () => {
         const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
@@ -74,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
-        // Touche M : Mode Edition (Afficher les boutons Modifier/Supprimer)
+        // Touche M : Mode Edition sur les cartes
         if (e.key.toLowerCase() === 'm' && !isTyping) {
             e.preventDefault();
             isAdminMode = !isAdminMode;
@@ -83,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Touche Entrée : Lancer la recherche
+        // Touche Entrée : Recherche
         if (e.key === 'Enter' && e.target === searchInput) {
             e.preventDefault();
             filterLibrary();
@@ -94,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (searchInput.value === "") filterLibrary();
     });
 
-    // --- 4. GESTION ADMINISTRATION ---
+    // --- 4. GESTION ADMINISTRATION (BOUTON + ET JSON) ---
     openAdminBtn.onclick = () => {
         adminPanel.style.display = 'flex';
         genCodeSection.style.display = 'none';
@@ -109,7 +110,6 @@ document.addEventListener("DOMContentLoaded", () => {
             img: document.getElementById('adminImg').value.split(','),
             prompt: document.getElementById('adminPrompt').value
         };
-        // Affiche le code généré dans le textarea fixe
         genCodeArea.value = JSON.stringify(newPrompt, null, 4) + ",";
         genCodeSection.style.display = 'block';
     };
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // --- 5. MODALE & ACTIONS CLICS ---
+    // --- 5. MODALE & GALERIE ---
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
         document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
@@ -130,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.addEventListener('click', e => {
-        // Bouton Modifier
+        // --- BOUTON MODIFIER ---
         if (e.target.classList.contains('btn-edit-card')) {
             const idx = e.target.getAttribute('data-idx');
             const data = promptDatabase[idx];
@@ -142,9 +142,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Bouton Supprimer
+        // --- BOUTON SUPPRIMER ---
         if (e.target.classList.contains('btn-delete-card')) {
-            if(confirm("Supprimer ce prompt de la session ?")) {
+            if(confirm("Supprimer ce prompt ?")) {
                 const idx = e.target.getAttribute('data-idx');
                 promptDatabase.splice(idx, 1);
                 renderLibrary();
@@ -155,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Clic sur une carte (Ouverture galerie)
+        // --- OUVERTURE MODALE ---
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -177,22 +177,32 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // Bouton Copier Prompt
+        // --- BOUTON COPIER (Gère Grille ET Modale) ---
         if (e.target.classList.contains('btn-copy')) {
-            const text = e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
+            let text = "";
+            if (e.target.id === "modalCopyBtn") {
+                // Copie depuis la modale
+                text = document.getElementById('modalDescription').innerText;
+            } else {
+                // Copie depuis une carte de la grille
+                text = e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
+            }
+
             navigator.clipboard.writeText(text).then(() => {
-                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
+                const b = e.target;
+                const old = b.innerText;
+                b.innerText = "✓ Copié !";
                 setTimeout(() => b.innerText = old, 2000);
             });
         }
 
-        // Fermetures Modales
+        // --- FERMETURES ---
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
-        // Navigation Galerie
+        // --- NAVIGATION GALERIE ---
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);
@@ -203,7 +213,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Filtres
+    // --- 6. FILTRES CATÉGORIES ---
     document.querySelectorAll('.style-card[data-filter]').forEach(b => {
         b.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -212,5 +222,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
+    // Initialisation
     renderLibrary();
 });

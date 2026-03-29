@@ -1,7 +1,7 @@
 const promptDatabase = [
     {
         "title": "CINEMATIC",
-        "styles": "portraits caricatures femmes",
+        "styles": "portrait caricature femme",
         "img": [
             "Images/Gemini_Generated_Image_44306f44306f4430.png",
             "Images/10688.png",
@@ -11,7 +11,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT",
-        "styles": "portraits cinematiques femmes",
+        "styles": "portrait cinematique femme",
         "img": [
             "https://nouchi18.github.io/Mes_Prompts/Images/10683.png"
         ],
@@ -19,7 +19,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT SPORT",
-        "styles": "portraits sports femmes",
+        "styles": "portrait sport femme",
         "img": [
             "Images/10688.png"
         ],
@@ -27,7 +27,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT FASHION CHAT",
-        "styles": "portraits fashions hommes",
+        "styles": "portrait fashion homme",
         "img": [
             "Images/10701.png"
         ],
@@ -35,7 +35,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT CAMOMILLE",
-        "styles": "portraits femmes",
+        "styles": "portrait femme",
         "img": [
             "Images/10729.png"
         ],
@@ -43,7 +43,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT BIKER CHIC",
-        "styles": "portraits femmes fashions",
+        "styles": "portrait femme fashion",
         "img": [
             "Images/8878.png"
         ],
@@ -51,7 +51,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT QIPAO LUXE",
-        "styles": "portraits femmes",
+        "styles": "portrait femme",
         "img": [
             "Images/8875.png"
         ],
@@ -59,7 +59,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT DENIM ÉDITO",
-        "styles": "portraits femmes fashions",
+        "styles": "portrait femme fashion",
         "img": [
             "Images/8873.png"
         ],
@@ -67,7 +67,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT ROUGE CHIAROSCURO",
-        "styles": "portraits femmes fashions",
+        "styles": "portrait femme fashion",
         "img": [
             "Images/8872.png"
         ],
@@ -75,7 +75,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT BARBIECORE 60S",
-        "styles": "femmes fashions",
+        "styles": "femme fashion",
         "img": [
             "Images/8881.png"
         ],
@@ -83,7 +83,7 @@ const promptDatabase = [
     },
     {
         "title": "PORTRAIT COQUETTE PREPPY",
-        "styles": "portraits femmes",
+        "styles": "portrait femme",
         "img": [
             "Images/8869.png"
         ],

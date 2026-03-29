@@ -21,7 +21,6 @@
         </section>
 
         <div class="search-container">
-            <!-- Le formulaire bloque physiquement le rechargement de la page -->
             <form class="search-wrapper" onsubmit="event.preventDefault(); return false;">
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput" placeholder="Rechercher... (Appuyez sur Entrée)" autocomplete="off">
@@ -49,7 +48,6 @@
         <main class="prompts-grid" id="grid"></main>
     </div>
 
-    <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
             <span class="modal-close closeModal">&times;</span>
@@ -71,7 +69,6 @@
         </div>
     </div>
 
-    <!-- Panneau Admin -->
     <div id="adminPanel" class="modal">
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
@@ -79,8 +76,8 @@
                 <h2 style="margin-bottom: 20px;">Gestion Database</h2>
                 <div class="admin-form">
                     <input type="text" id="adminTitle" placeholder="Titre">
-                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
-                    <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
+                    <input type="text" id="adminStyles" placeholder="Styles">
+                    <input type="text" id="adminImg" placeholder="Liens images">
                     <textarea id="adminPrompt" placeholder="Texte du prompt..."></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>

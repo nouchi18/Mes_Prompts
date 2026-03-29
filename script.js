@@ -46,18 +46,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. FILTRAGE ---
+    // --- 2. FILTRAGE ROBUSTE ---
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
-        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
+        const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter').toLowerCase() : "all";
         const term = searchInput.value.toLowerCase().trim();
         
         document.querySelectorAll('.card').forEach(card => {
-            const styles = card.getAttribute('data-style').toLowerCase();
-            const content = card.innerText.toLowerCase();
-            const matchesStyle = (activeStyle === "all" || styles.includes(activeStyle));
-            const matchesSearch = (term === "" || content.includes(term));
-            card.style.display = (matchesStyle && matchesSearch) ? "block" : "none";
+            const cardStyles = card.getAttribute('data-style').toLowerCase();
+            const cardTitle = card.querySelector('.card-header').innerText.toLowerCase();
+            const cardPrompt = card.querySelector('.full-prompt-hidden').innerText.toLowerCase();
+            
+            // On vérifie si la catégorie active correspond
+            const matchesCategory = (activeStyle === "all" || cardStyles.includes(activeStyle));
+            
+            // On vérifie si le texte cherché est présent PARTOUT (titre, tags ou texte du prompt)
+            const matchesSearch = (term === "" || 
+                                   cardTitle.includes(term) || 
+                                   cardStyles.includes(term) || 
+                                   cardPrompt.includes(term));
+            
+            card.style.display = (matchesCategory && matchesSearch) ? "block" : "none";
         });
         updateStats();
     };
@@ -67,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 3. CLAVIER (RECHERCHE STABILISÉE) ---
+    // --- 3. CLAVIER (ENTRÉE & M) ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
@@ -80,12 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (e.key === 'Enter' && e.target.id === 'searchInput') {
-            e.preventDefault();
-            e.stopPropagation();
+            e.preventDefault(); // Stop le rechargement
             filterLibrary();
         }
     });
 
+    // Reset si champ vidé
     searchInput.addEventListener('input', () => { if (searchInput.value === "") filterLibrary(); });
 
     // --- 4. ADMIN ---
@@ -120,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.addEventListener('click', e => {
+        // Actions Admin (Edit/Delete)
         if (e.target.classList.contains('btn-edit-card')) {
             const data = promptDatabase[e.target.dataset.idx];
             document.getElementById('adminTitle').value = data.title;
@@ -141,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Ouverture modale
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -172,6 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
+        // Copie intelligente
         if (e.target.classList.contains('btn-copy')) {
             const text = (e.target.id === "modalCopyBtn") 
                 ? document.getElementById('modalDescription').innerText 
@@ -183,11 +195,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Fermetures
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
+        // Navigation
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);
@@ -198,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Catégories
     document.querySelectorAll('.style-card[data-filter]').forEach(b => {
         b.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));

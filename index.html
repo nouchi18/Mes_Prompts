@@ -21,10 +21,11 @@
         </section>
 
         <div class="search-container">
-            <div class="search-wrapper">
+            <!-- Le formulaire bloque physiquement le rechargement de la page -->
+            <form class="search-wrapper" onsubmit="event.preventDefault(); return false;">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="Rechercher... (Appuyez sur Entrée)">
-            </div>
+                <input type="text" id="searchInput" placeholder="Rechercher... (Appuyez sur Entrée)" autocomplete="off">
+            </form>
         </div>
 
         <nav class="styles-section">
@@ -51,10 +52,9 @@
     <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
-            <span class="modal-close" id="closeModal">&times;</span>
+            <span class="modal-close closeModal">&times;</span>
             <div class="modal-left">
                 <div class="modal-gallery-wrapper">
-                    <!-- Flèches qui seront cachées si 1 seule image -->
                     <button class="nav-btn prev-btn">&#10094;</button>
                     <img id="modalImg" src="" class="modal-img">
                     <button class="nav-btn next-btn">&#10095;</button>
@@ -81,11 +81,11 @@
                     <input type="text" id="adminTitle" placeholder="Titre">
                     <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
                     <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
-                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="10"></textarea>
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..."></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>
                 <div id="generatedCodeSection" style="display:none; width: 100%; margin-top: 25px;">
-                    <textarea id="generatedCode" readonly placeholder="Le code apparaîtra ici..."></textarea>
+                    <textarea id="generatedCode" readonly></textarea>
                     <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top:10px;">Copier le code Database</button>
                 </div>
             </div>

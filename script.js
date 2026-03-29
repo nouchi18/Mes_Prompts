@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         counter.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 3. CLAVIER (Correction Entrée & Touche M) ---
+    // --- 3. CLAVIER (RECHERCHE STABILISÉE) ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
@@ -79,8 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (e.key === 'Enter' && e.target === searchInput) {
-            e.preventDefault(); // EMPÊCHE LE BUG DU RECHARGEMENT
+        if (e.key === 'Enter' && e.target.id === 'searchInput') {
+            e.preventDefault();
+            e.stopPropagation();
             filterLibrary();
         }
     });
@@ -110,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     };
 
-    // --- 5. MODALE & GALERIE (Correction flèches) ---
+    // --- 5. MODALE & GALERIE ---
     const updateGalleryImage = (index) => {
         if (!currentGalleryImages[index]) return;
         currentImgIndex = index;
@@ -119,7 +120,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.addEventListener('click', e => {
-        // Modifier/Supprimer
         if (e.target.classList.contains('btn-edit-card')) {
             const data = promptDatabase[e.target.dataset.idx];
             document.getElementById('adminTitle').value = data.title;
@@ -130,7 +130,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // Ouverture modale
+        if (e.target.classList.contains('btn-delete-card')) {
+            if(confirm("Supprimer ?")) {
+                promptDatabase.splice(e.target.dataset.idx, 1);
+                renderLibrary();
+                genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
+                genCodeSection.style.display = 'block';
+                adminPanel.style.display = 'flex';
+            }
+            return;
+        }
+
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -162,7 +172,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // Copie
         if (e.target.classList.contains('btn-copy')) {
             const text = (e.target.id === "modalCopyBtn") 
                 ? document.getElementById('modalDescription').innerText 
@@ -174,13 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Fermeture
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
-        // Navigation
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);

@@ -109,11 +109,21 @@ document.addEventListener("DOMContentLoaded", () => {
         genCodeSection.style.display = 'block';
     };
 
+    // Bouton de copie Database
+    btnCopyDB.onclick = function() {
+        navigator.clipboard.writeText(genCodeArea.value).then(() => {
+            const old = this.innerText;
+            this.innerText = "✓ Code copié !";
+            setTimeout(() => this.innerText = old, 2000);
+        });
+    };
+
     // --- 6. GESTION DES CLICS GLOBAUX ---
     document.addEventListener('click', e => {
         // MODIFIER
         if (e.target.classList.contains('btn-edit-card')) {
-            const data = promptDatabase[e.target.dataset.idx];
+            const idx = e.target.getAttribute('data-idx');
+            const data = promptDatabase[idx];
             document.getElementById('adminTitle').value = data.title;
             document.getElementById('adminStyles').value = data.styles;
             document.getElementById('adminImg').value = Array.isArray(data.img) ? data.img.join(',') : data.img;
@@ -125,9 +135,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // SUPPRIMER
         if (e.target.classList.contains('btn-delete-card')) {
-            if(confirm("Supprimer de la session ?")) {
-                promptDatabase.splice(e.target.dataset.idx, 1);
+            if(confirm("Supprimer ce prompt ?")) {
+                const idx = e.target.getAttribute('data-idx');
+                promptDatabase.splice(idx, 1);
                 renderLibrary();
+                // Génère le code complet pour mise à jour manuelle du fichier JS
                 genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
                 genCodeSection.style.display = 'block';
                 adminPanel.style.display = 'flex';
@@ -135,8 +147,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // COPIER
-        if (e.target.classList.contains('btn-copy')) {
+        // COPIER PROMPT
+        if (e.target.classList.contains('btn-copy') && e.target.id !== 'btnCopyDB') {
             const text = (e.target.id === "modalCopyBtn") ? document.getElementById('modalDescription').innerText : e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             navigator.clipboard.writeText(text).then(() => {
                 const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
@@ -155,7 +167,25 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
-            prevBtn.style.display = nextBtn.style.display = (currentGalleryImages.length > 1) ? 'block' : 'none';
+            const thumbContainer = document.getElementById('modalThumbs');
+            
+            thumbContainer.innerHTML = "";
+            
+            if (currentGalleryImages.length > 1) {
+                prevBtn.style.display = nextBtn.style.display = 'block';
+                currentGalleryImages.forEach((src, i) => {
+                    const t = document.createElement('img');
+                    t.src = src; t.className = `thumb ${i===0?'active':''}`;
+                    t.onclick = () => {
+                        currentImgIndex = i;
+                        document.getElementById('modalImg').src = src;
+                        document.querySelectorAll('.thumb').forEach((th, idx) => th.classList.toggle('active', idx === i));
+                    };
+                    thumbContainer.appendChild(t);
+                });
+            } else {
+                prevBtn.style.display = nextBtn.style.display = 'none';
+            }
             
             currentImgIndex = 0;
             document.getElementById('modalImg').src = currentGalleryImages[0];
@@ -168,14 +198,16 @@ document.addEventListener("DOMContentLoaded", () => {
             adminPanel.style.display = 'none';
         }
 
-        // GALERIE
+        // NAVIGATION GALERIE
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
+            document.querySelectorAll('.thumb').forEach((th, idx) => th.classList.toggle('active', idx === currentImgIndex));
         }
         if (e.target.classList.contains('next-btn')) {
             currentImgIndex = (currentImgIndex + 1) % currentGalleryImages.length;
             document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
+            document.querySelectorAll('.thumb').forEach((th, idx) => th.classList.toggle('active', idx === currentImgIndex));
         }
     });
 

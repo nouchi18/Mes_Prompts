@@ -13,13 +13,33 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let isAdminMode = false;
 
-    // --- 1. FONCTION AUTO-TITRE ---
-    const autoGenerateTitle = (prompt) => {
-        const stopWords = ['un', 'une', 'le', 'la', 'les', 'de', 'du', 'des', 'au', 'aux', 'et', 'pour', 'avec', 'dans', 'sur'];
-        const words = prompt.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(/\s+/);
-        const keywords = words.filter(word => word.length > 3 && !stopWords.includes(word));
-        const final = keywords.slice(0, 3).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
-        return final || "NOUVEAU PROMPT";
+    // --- 1. MOTEUR D'ANALYSE SÉMANTIQUE (Sujet + Action + Style) ---
+    const smartGenerateTitle = (prompt) => {
+        if (!prompt) return "NOUVEAU PROMPT";
+
+        const p = prompt.toLowerCase();
+        const words = p.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, " ").split(/\s+/);
+
+        // Dictionnaires de détection (Français & Anglais)
+        const dict = {
+            subjects: ['homme', 'femme', 'fille', 'garçon', 'lion', 'chat', 'chien', 'robot', 'astronaute', 'guerrier', 'chevalier', 'voiture', 'dragon', 'man', 'woman', 'girl', 'boy', 'robot', 'astronaut', 'warrior', 'knight', 'cat', 'dog'],
+            actions: ['courant', 'marchant', 'volant', 'méditant', 'sautant', 'riant', 'dormant', 'lisant', 'mangeant', 'combat', 'running', 'walking', 'flying', 'meditating', 'jumping', 'smiling', 'reading', 'sleeping', 'fighting'],
+            styles: ['3d', 'anime', 'manga', 'caricature', 'cinematic', 'cinématique', 'aquarelle', 'watercolor', 'cyberpunk', 'futuriste', 'retro', 'vintage', 'pixel art', 'sketch', 'crayon', 'oil painting', 'vray', 'unreal engine']
+        };
+
+        // Extraction des composants
+        let foundSubject = words.find(w => dict.subjects.includes(w));
+        let foundAction = words.find(w => dict.actions.includes(w));
+        let foundStyle = words.find(w => dict.styles.includes(w));
+
+        // Secours : si pas de sujet, on prend le premier mot de plus de 4 lettres
+        if (!foundSubject) foundSubject = words.find(w => w.length > 4) || "Sujet";
+        
+        // Assemblage final
+        let parts = [foundSubject, foundAction, foundStyle].filter(part => part && part !== "");
+        
+        // Capitalisation (ex: Lion Courant Aquarelle)
+        return parts.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ").toUpperCase();
     };
 
     // --- 2. RENDU DE LA GRILLE ---
@@ -52,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 3. FILTRAGE STABLE ---
+    // --- 3. FILTRAGE ET RECHERCHE ---
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter').toLowerCase() : "all";
@@ -73,17 +93,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const updateStats = () => {
         const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
-        document.getElementById('counter').innerText = `${visible} Prompt(s) affiché(s)`;
+        const counterEl = document.getElementById('counter');
+        if(counterEl) counterEl.innerText = `${visible} Prompt(s) affiché(s)`;
     };
 
-    // --- 4. CLAVIER (ENTRÉE & M) ---
+    // --- 4. GESTION CLAVIER (ENTRÉE & ADMIN) ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+        
+        // Touche M pour Admin
         if (e.key.toLowerCase() === 'm' && !isTyping) {
             e.preventDefault();
             isAdminMode = !isAdminMode;
             document.querySelectorAll('.admin-controls').forEach(c => c.style.display = isAdminMode ? 'flex' : 'none');
         }
+
+        // Touche Entrée pour Recherche
         if (e.key === 'Enter' && e.target.id === 'searchInput') {
             e.preventDefault();
             filterLibrary();
@@ -96,31 +121,33 @@ document.addEventListener("DOMContentLoaded", () => {
     btnSaveAction.onclick = () => {
         const titleInput = document.getElementById('adminTitle');
         const promptText = document.getElementById('adminPrompt').value;
-        let finalTitle = titleInput.value.trim() || autoGenerateTitle(promptText);
+        
+        // Analyse automatique si le titre est vide
+        let finalTitle = titleInput.value.trim() || smartGenerateTitle(promptText);
         titleInput.value = finalTitle;
 
         const newPrompt = {
-            title: finalTitle.toUpperCase(),
+            title: finalTitle,
             styles: document.getElementById('adminStyles').value,
             img: document.getElementById('adminImg').value.split(','),
             prompt: promptText
         };
+        
         genCodeArea.value = JSON.stringify(newPrompt, null, 4) + ",";
         genCodeSection.style.display = 'block';
     };
 
-    // Bouton de copie Database
     btnCopyDB.onclick = function() {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
             const old = this.innerText;
-            this.innerText = "✓ Code copié !";
+            this.innerText = "✓ Code Database Copié !";
             setTimeout(() => this.innerText = old, 2000);
         });
     };
 
     // --- 6. GESTION DES CLICS GLOBAUX ---
     document.addEventListener('click', e => {
-        // MODIFIER
+        // Modifier
         if (e.target.classList.contains('btn-edit-card')) {
             const idx = e.target.getAttribute('data-idx');
             const data = promptDatabase[idx];
@@ -133,13 +160,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // SUPPRIMER
+        // Supprimer
         if (e.target.classList.contains('btn-delete-card')) {
             if(confirm("Supprimer ce prompt ?")) {
-                const idx = e.target.getAttribute('data-idx');
-                promptDatabase.splice(idx, 1);
+                promptDatabase.splice(e.target.dataset.idx, 1);
                 renderLibrary();
-                // Génère le code complet pour mise à jour manuelle du fichier JS
                 genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
                 genCodeSection.style.display = 'block';
                 adminPanel.style.display = 'flex';
@@ -147,7 +172,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // COPIER PROMPT
+        // Copier le Prompt
         if (e.target.classList.contains('btn-copy') && e.target.id !== 'btnCopyDB') {
             const text = (e.target.id === "modalCopyBtn") ? document.getElementById('modalDescription').innerText : e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -157,7 +182,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // OUVERTURE MODALE VISU
+        // Ouverture Modale Visualisation
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -168,11 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const prevBtn = document.querySelector('.prev-btn');
             const nextBtn = document.querySelector('.next-btn');
             const thumbContainer = document.getElementById('modalThumbs');
-            
             thumbContainer.innerHTML = "";
             
             if (currentGalleryImages.length > 1) {
-                prevBtn.style.display = nextBtn.style.display = 'block';
+                if(prevBtn) prevBtn.style.display = 'block';
+                if(nextBtn) nextBtn.style.display = 'block';
                 currentGalleryImages.forEach((src, i) => {
                     const t = document.createElement('img');
                     t.src = src; t.className = `thumb ${i===0?'active':''}`;
@@ -184,7 +209,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     thumbContainer.appendChild(t);
                 });
             } else {
-                prevBtn.style.display = nextBtn.style.display = 'none';
+                if(prevBtn) prevBtn.style.display = 'none';
+                if(nextBtn) nextBtn.style.display = 'none';
             }
             
             currentImgIndex = 0;
@@ -192,13 +218,13 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // FERMETURES
+        // Fermetures Modales
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
-        // NAVIGATION GALERIE
+        // Navigation Galerie
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];

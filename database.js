@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME FASHION ROYALE GOTHIQUE",
+    "styles": "femme fashion",
+    "img": [
+        "Images/IMG_20260329_214923.png"
+    ],
+    "prompt": "Créez une photographie cinématographique ultra-réaliste d’une femme royale, utilisez la photo jointe comme figure de référence debout dans un cadre gothique et atmosphérique. Elle porte un corset ressemblant à une armure noire métallisée finement détaillée avec des ornements en épine et un décolleté plongeant, associé à des manches longues assorties qui s’étendent dans des épaulettes sculptées ressemblant à des branches tordues. Le corset révèle un clivage et se connecte à une armure de cuisse haute avec des motifs en filigrane organiques ressemblant à de la dentelle, exposant une fente haute dans une cape en velours rouge et noir fluide qui drape de manière spectaculaire jusqu’au sol. Sa tête est couronnée d’une couronne argentée à pointes avec des extensions pointues, semblables à des brindilles et une pierre précieuse centrale de couleur turquoise ; un bijou de couleur turquoise assorti orne la pièce de poitrine. La peau du modèle est impeccable, avec un éclairage naturel mettant en valeur les textures de l’armure et du tissu. L’arrière-plan est un intérieur fantaisiste sombre et lunatique avec des tons bleus verts atténués, un cadrage doré orné et une profondeur atmosphérique, concentrant le regard du spectateur sur la présence imposante du sujet et les textures hyper-détaillées du costume. Capturez la scène avec une haute résolution, une qualité de film de 35 mm, un focus précis sur l’expression du visage et les détails matériels, ainsi qu’un éclairage en clair-obscur dramatique qui met l’accent sur le contraste entre l’armure métallique et la riche cape en velours.\nImage ratio : 2/3."
+},
+    {
     "title": "PORTRAIT ÉDITORIAL CINÉMATOGRAPHIQUE",
     "styles": "femme fashion cinématique",
     "img": [

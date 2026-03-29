@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "CHAT DANS UN CHAMP DE FKEURS",
+    "styles": "animal paysage portrait",
+    "img": [
+        "Images/IMG_20260329_223152.png"
+    ],
+    "prompt": "Utilise la photo de référence du chat principal comme base visuelle EXACTE.\nLe visage, la texture du pelage, les proportions, le motif du pelage et la reconnaissabilité doivent être identiques à 100 %, sans aucun écart.\nPhotographie d'art ultra-réaliste et cinématographique, format portrait (2:3), 8K.\nSCÈNE :\nLe chat principal se tient très près et de face devant l'appareil photo, dans une prairie fleurie naturelle et légèrement sauvage.\nL'appareil photo est placé très bas au sol (perspective à la grenouille) et regarde légèrement vers le haut.\nRendu grand angle discret (24–35 mm), museau légèrement accentué, mais réaliste.\nCIEL :\nLe ciel occupe 60 à 70 % de l'image.\nCoucher de soleil spectaculaire aux teintes intenses d'orange, de rouge et d'or.\nNuages texturés, légèrement sombres, pour un rendu épique et cinématographique (pas de surutilisation du HDR).\nCHIEN + FLEURS :\nLe chat tient dans sa gueule fermée un petit bouquet un peu en désordre composé de pâquerettes et de fleurs des champs.\nLèvres complètement fermées, aucune dent visible.\nTiges des fleurs naturellement courbées et fixées de manière crédible dans la gueule.\nEXPRESSION :\nCalme, douce, affectueuse et confiante.\nYeux légèrement brillants, très naturels.\nABEILLE (IMPORTANT – DOIT ÊTRE VISIBLE) :\nUne petite abeille réaliste vole, clairement visible, à côté du bouquet.\nPosition : légèrement à droite des fleurs, à la hauteur des pétales.\nL’abeille ne doit PAS être cachée, PAS coupée et PAS disparaître à l’arrière-plan.\nCorps de l’abeille net, ailes avec un léger flou de mouvement.\nLégère lumière chaude en contre-jour sur l'abeille, afin qu'elle se détache clairement de l'arrière-plan.\nLUMIÈRE :\nLumière chaude du soleil, basse, venant de l'avant et légèrement sur le côté.\nLégers reflets sur les pointes du pelage.\nLe pelage reste neutre.\nCOMPOSITION :\nGros plan extrême.\nL'horizon est très bas dans l'image.\nMise au point très nette sur les yeux, le nez et les fleurs.\nArrière-plan flou avec un bokeh crémeux.\nDÉTAILS :\nStructure du pelage extrêmement fine, chaque poil est visible.\nFines particules à contre-jour (poussière/pollen).\nIrrégularité naturelle dans le bouquet de fleurs.\nAMBIANCE :\nPoétique, calme, émouvante – comme si le chien offrait les fleurs.\nINDICATIONS À ÉVITER :\nbouche ouverte, dents visibles, chien souriant, dominante orange dans le pelage, style cartoon, exagération HDR, ciel plat, w"
+},
+    {
     "title": "FEMME DANS UN CHAMP DE FLEURES",
     "styles": "femme paysage",
     "img": [

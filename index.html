@@ -31,23 +31,24 @@
             <div class="styles-grid">
                 <div class="style-card active" data-filter="all"># Tous</div>
                 <div class="style-card" data-filter="3d">3D</div>
-                <div class="style-card" data-filter="affiche">Affiche</div>
-                <div class="style-card" data-filter="animal">Animal</div>
-                <div class="style-card" data-filter="anime">Manga</div>
-                <div class="style-card" data-filter="beauté">Beauté</div>
-                <div class="style-card" data-filter="caricature">Caricature</div>
-                <div class="style-card" data-filter="cinematique">Cinématique</div>
-                <div class="style-card" data-filter="femme">Femme</div>
-                <div class="style-card" data-filter="homme">Homme</div>
-                <div class="style-card" data-filter="portrait">Portrait</div>
-                <div class="style-card" data-filter="sport">Sport</div>
-                <div class="style-card" data-filter="fashion">Fashion</div>
+                <div class="style-card" data-filter="affiches">Affiches</div>
+                <div class="style-card" data-filter="animaux">Animaux</div>
+                <div class="style-card" data-filter="animes">Mangas</div>
+                <div class="style-card" data-filter="beautés">Beautés</div>
+                <div class="style-card" data-filter="caricatures">Caricatures</div>
+                <div class="style-card" data-filter="cinematiques">Cinématiques</div>
+                <div class="style-card" data-filter="femmes">Femmes</div>
+                <div class="style-card" data-filter="hommes">Hommes</div>
+                <div class="style-card" data-filter="portraits">Portraits</div>
+                <div class="style-card" data-filter="sports">Sports</div>
+                <div class="style-card" data-filter="fashions">Fashions</div>
             </div>
         </nav>
 
         <main class="prompts-grid" id="grid"></main>
     </div>
 
+    <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
             <span class="modal-close closeModal">&times;</span>
@@ -69,15 +70,16 @@
         </div>
     </div>
 
+    <!-- Panneau Admin -->
     <div id="adminPanel" class="modal">
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
             <div class="modal-body" style="width: 100%;">
                 <h2 style="margin-bottom: 20px;">Gestion Database</h2>
                 <div class="admin-form">
-                    <input type="text" id="adminTitle" placeholder="Titre">
-                    <input type="text" id="adminStyles" placeholder="Styles">
-                    <input type="text" id="adminImg" placeholder="Liens images">
+                    <input type="text" id="adminTitle" placeholder="Titre (Auto-généré si vide)">
+                    <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
+                    <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
                     <textarea id="adminPrompt" placeholder="Texte du prompt..."></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>

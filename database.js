@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME FASHION LUXE",
+    "styles": "femme fashion ",
+    "img": [
+        "Images/13315.png"
+    ],
+    "prompt": "Photo de corps entier dans un style éditorial à la mode, capture ultra-réaliste en 8k, prise avec une caméra Canon EOS R5, objectif 85mm f/1.2 L pour une profondeur de champ cinématographique.\nDécor : intérieur luxueux d’un hall d’hôtel haut de gamme, sol en marbre poli avec des reflets doux, murs avec panneaux de bois verticaux et éclairage d’ambiance chaleureux avec des rondelles dorées créant une atmosphère sophistiquée et exclusive.\nModèle : Femme avec de longs cheveux, lisses et d’un éclat intense, disposés avec une rayure centrale. Maquillage professionnel de style \"glam\" avec des contours définis, lèvres en ton nude marron avec une finition mate, yeux marqués avec un contour fumé et cils volumineux.\nVêtement : Robe corset courte en satin noir avec buste structuré et jupe volumineuse de multiples couches de balivernes (style « peplum » dramatique). Le tissu a un éclat satiné premium.\nAccessoires : collier de mailles épais en or avec pendentif cœur central, bracelets empilés en or sur les poignets. Petit sac à main structuré, style matelassé de couleur blanche.\nChaussures : Scarpin à talons haute avec plate-forme (style \"chunky platform\") en cuir verni noir, avec une délicate bande de cheville. Le mannequin porte un pantalon noir translucide.\nPose et angle : Pose de marche dynamique et naturelle, avec un pied légèrement devant l’autre, capturant le mouvement. L’angle de la caméra est frontal, positionné au niveau de la hanche (eye-level légèrement abaissé) pour mettre en valeur la taille et la silhouette du modèle, conférant grandeur et élégance.\nEclairage et humour : éclairage de studio de haute qualité, axé sur le modèle, mettant en valeur la texture des tissus et l’éclat de la peau. Humour luxueux, confiant et contemporain.\nMaintenez les affections du visage et du corps à 100% comme sur l’image. En maintenant la forme du nez, de la bouche et des yeux identique aux images de référence.\nImage ratio : 2/3."
+},
+    {
     "title": "BATTEUR GUERRIER NORDIQUE",
     "styles": "homme cinematique",
     "img": [

@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "PORTRAIT DECOLLETE",
+    "styles": "femme fashion portrait",
+    "img": [
+        "Images/13318.png"
+    ],
+    "prompt": "Créez un portrait en gros plan hyper réaliste d’une femme, utilisez la photo jointe comme référence, en regardant dans l’objectif. Elle porte une robe noire élaborée avec un décolleté plongeant. Le col haut et les revers sont richement ornés de broderies dorées complexes et de perles à motifs floraux. Elle a une coiffure élégante en chignon et est ornée de longues boucles d’oreilles en or étincelantes. Un fermoir décoratif en or avec des chaînes suspendues et un charme céleste accentue le devant de sa robe. Le fond est d’un gris doux et atténué.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME FASHION LUXE",
     "styles": "femme fashion ",
     "img": [

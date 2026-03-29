@@ -39,7 +39,7 @@ header {
 
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
 .hero h1 { text-align: center; font-size: 2.2rem; background: linear-gradient(to right, #fff, var(--accent-color)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 2rem; }
-.hero p1 {text-align: center;}
+.hero p {text-align: center;}
 
 /* RECHERCHE */
 .search-container { max-width: 600px; margin: 0 auto 2rem auto; }

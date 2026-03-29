@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "HOMME COMBAT",
+    "styles": "homme cinématique ",
+    "img": [
+        "Images/IMG_20260329_220453.png"
+    ],
+    "prompt": "Une image cinématographique hyperréaliste montrant un homme féroce et musclé, torse nu, à la barbe sombre et aux cheveux soigneusement coiffés, mesurant 1m57, aux prises dans un combat acharné avec un lion mâle imposant qui rugit. L'homme porte un kilt de gladiateur en cuir robuste et un brassard en cuir, le bras fermement enroulé autour de l'épaisse crinière du lion dans une lutte épique. La scène se déroule à l'intérieur d'une ancienne grotte de pierre sombre, éclairée par la lueur chaude et dramatique de torches allumées fixées aux murs. Des braises ardentes et des étincelles flottantes envahissent l'air. Le sol en terre battue est jonché de vieux os et de crânes humains. De vagues runes anciennes sont gravées sur les parois de la grotte en arrière-plan. Fantastique épique, ambiance mythologique, action intense, éclairage dramatique, résolution 8K, très détaillé.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME PORTRAIT FASHION",
     "styles": "femme portrait fashion",
     "img": [

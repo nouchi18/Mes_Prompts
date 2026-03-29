@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME VINTAGE EN STUDIO",
+    "styles": "femme fashion studio",
+    "img": [
+        "Images/IMG_20260329_223806.png"
+    ],
+    "prompt": "VERROUILLAGE ABSOLU DU VISAGE ET DU CORPS — NON NÉGOCIABLE :\nRespecter impérativement et sans interprétation tous les traits réels de la personne.\n\nUn portrait raffiné, d'inspiration vintage, d'une femme sereine assise sur un simple tabouret en bois, dans un style élégant typique du milieu du XXe siècle. Elle porte une robe ajustée à motifs, dans des tons rouge foncé et dorés, aux détails raffinés, taillée pour mettre en valeur sa silhouette, des chaussures assorties à sa tenue.\n\nSa posture est assurée et gracieuse : une main posée sur le tabouret, l'autre sur la taille, les jambes élégamment croisées.\nSes cheveux sont coiffés en boucles souples et sculptées, typiques du glamour hollywoodien classique, et son maquillage est raffiné, avec un rouge à lèvres rouge vif et un regard subtilement souligné. Son expression est posée et pensive, le regard légèrement détourné de l'objectif, comme perdue dans ses pensées.\n\nL'éclairage est dramatique et pictural, avec une lumière directionnelle douce qui sculpte son visage et son corps, créant de la profondeur et du contraste sur un fond de studio sombre et texturé. Des volutes de fumée atmosphérique flottent subtilement dans la scène, ajoutant une ambiance et un intérêt visuel.\n\nTrès détaillé, hyperréaliste, mise au point nette, textures riches, étalonnage cinématographique, ombres douces, photographie de portrait en studio, élégance intemporelle.\n\nComposition verticale du portrait, mise en valeur de la hauteur du cadre, mise en page de type affiche cinématographique.\n\nImage ratio : 2/3."
+},
+    {
     "title": "CHAT DANS UN CHAMP DE FKEURS",
     "styles": "animal paysage portrait",
     "img": [

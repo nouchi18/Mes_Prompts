@@ -1,7 +1,17 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Éléments de l'interface principale
     const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
+    
+    // Éléments du mode Administration
+    const adminPanel = document.getElementById('adminPanel');
+    const openAdminBtn = document.getElementById('openAdmin');
+    const closeAdminBtn = document.getElementById('closeAdmin');
+    const btnSaveAction = document.getElementById('btnSaveAction');
+    const genCodeArea = document.getElementById('generatedCode');
+    const genCodeSection = document.getElementById('generatedCodeSection');
+    const btnCopyDB = document.getElementById('btnCopyDB');
     
     let currentGalleryImages = [];
     let currentImgIndex = 0;
@@ -58,24 +68,56 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 3. GESTION DES ÉVÉNEMENTS RECHERCHE (CORRIGÉ) ---
-    
-    // Empêche le bug du "une fois sur deux" (rechargement de page)
+    // --- 3. ÉVÉNEMENTS RECHERCHE & CLAVIER ---
     searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
-            e.preventDefault(); // Empêche le navigateur de rafraîchir la page
+            e.preventDefault(); 
             filterLibrary();
         }
     });
 
-    // Réaffiche tout si on efface manuellement le texte
     searchInput.addEventListener('input', (e) => {
-        if (e.target.value === "") {
-            filterLibrary();
+        if (e.target.value === "") filterLibrary();
+    });
+
+    // Raccourci touche "m" pour ouvrir l'admin (optionnel)
+    document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'm' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            adminPanel.style.display = adminPanel.style.display === 'flex' ? 'none' : 'flex';
         }
     });
 
-    // --- 4. GESTION DES FILTRES (BOUTONS) ---
+    // --- 4. GESTION DU MODE ADMIN (LE BOUTON +) ---
+    openAdminBtn.addEventListener('click', () => {
+        adminPanel.style.display = 'flex';
+        genCodeSection.style.display = 'none';
+    });
+
+    closeAdminBtn.addEventListener('click', () => {
+        adminPanel.style.display = 'none';
+    });
+
+    btnSaveAction.addEventListener('click', () => {
+        const newPrompt = {
+            title: document.getElementById('adminTitle').value,
+            styles: document.getElementById('adminStyles').value,
+            img: document.getElementById('adminImg').value.split(','),
+            prompt: document.getElementById('adminPrompt').value
+        };
+
+        const jsonCode = JSON.stringify(newPrompt, null, 4);
+        genCodeArea.value = jsonCode + ",";
+        genCodeSection.style.display = 'block';
+    });
+
+    btnCopyDB.addEventListener('click', () => {
+        genCodeArea.select();
+        navigator.clipboard.writeText(genCodeArea.value).then(() => {
+            alert("Code copié ! Ajoutez-le dans votre fichier database.js");
+        });
+    });
+
+    // --- 5. FILTRES (BOUTONS) ---
     document.querySelectorAll('.style-card[data-filter]').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -84,7 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // --- 5. MODALE ET GALERIE ---
+    // --- 6. MODALE ET GALERIE ---
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
         const modalImg = document.getElementById('modalImg');
@@ -97,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('click', e => {
         const card = e.target.closest('.card');
         
-        // Ouverture de la modale
         if (card && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
@@ -125,7 +166,6 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // Bouton Copier
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.id === "modalCopyBtn" ? 
                 document.getElementById('modalDescription').innerText : 
@@ -139,24 +179,19 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Fermeture Modale
         if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
         }
 
-        // Navigation Galerie
         if (e.target.classList.contains('prev-btn')) {
-            let idx = currentImgIndex - 1;
-            if (idx < 0) idx = currentGalleryImages.length - 1;
-            updateGalleryImage(idx);
+            currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
+            updateGalleryImage(currentImgIndex);
         }
         if (e.target.classList.contains('next-btn')) {
-            let idx = currentImgIndex + 1;
-            if (idx >= currentGalleryImages.length) idx = 0;
-            updateGalleryImage(idx);
+            currentImgIndex = (currentImgIndex + 1) % currentGalleryImages.length;
+            updateGalleryImage(currentImgIndex);
         }
     });
 
-    // Lancement initial
     renderLibrary();
 });

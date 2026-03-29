@@ -51,9 +51,10 @@
     <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
-            <span class="modal-close closeModal">&times;</span>
+            <span class="modal-close" id="closeModal">&times;</span>
             <div class="modal-left">
                 <div class="modal-gallery-wrapper">
+                    <!-- Flèches qui seront cachées si 1 seule image -->
                     <button class="nav-btn prev-btn">&#10094;</button>
                     <img id="modalImg" src="" class="modal-img">
                     <button class="nav-btn next-btn">&#10095;</button>
@@ -74,13 +75,13 @@
     <div id="adminPanel" class="modal">
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
-            <div class="modal-body">
+            <div class="modal-body" style="width: 100%;">
                 <h2 style="margin-bottom: 20px;">Gestion Database</h2>
                 <div class="admin-form">
                     <input type="text" id="adminTitle" placeholder="Titre">
                     <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
                     <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
-                    <textarea id="adminPrompt" placeholder="Texte du prompt..."></textarea>
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="10"></textarea>
                     <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>
                 <div id="generatedCodeSection" style="display:none; width: 100%; margin-top: 25px;">

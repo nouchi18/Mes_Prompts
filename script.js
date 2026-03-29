@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Éléments DOM principaux
     const grid = document.getElementById('grid');
     const counter = document.getElementById('counter');
     const searchInput = document.getElementById('searchInput');
@@ -15,13 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let isAdminMode = false;
 
-    // --- 1. GÉNÉRATION DE LA GRILLE ---
+    // --- 1. GÉNÉRATION GRILLE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         if (typeof promptDatabase !== 'undefined') {
-            promptDatabase.forEach((data, index) => {
-                grid.appendChild(createCardElement(data, index));
-            });
+            promptDatabase.forEach((data, index) => grid.appendChild(createCardElement(data, index)));
         }
         updateStats();
     };
@@ -30,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = document.createElement('article');
         card.className = 'card';
         card.setAttribute('data-style', data.styles);
-        
         const mainImg = Array.isArray(data.img) ? data.img[0] : data.img;
         const allImgs = Array.isArray(data.img) ? data.img.join(',') : data.img;
 
@@ -50,12 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. LOGIQUE DE FILTRAGE & STATS ---
-    const updateStats = () => {
-        const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
-        counter.innerText = `${visible} Prompt(s) affiché(s)`;
-    };
-
+    // --- 2. FILTRAGE ---
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
@@ -71,7 +62,12 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 3. ÉVÉNEMENTS CLAVIER (ENTRÉE & TOUCHE M) ---
+    const updateStats = () => {
+        const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
+        counter.innerText = `${visible} Prompt(s) affiché(s)`;
+    };
+
+    // --- 3. CLAVIER (Correction Entrée & Touche M) ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
@@ -84,21 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (e.key === 'Enter' && e.target === searchInput) {
-            e.preventDefault();
+            e.preventDefault(); // EMPÊCHE LE BUG DU RECHARGEMENT
             filterLibrary();
         }
     });
 
-    searchInput.addEventListener('input', () => {
-        if (searchInput.value === "") filterLibrary();
-    });
+    searchInput.addEventListener('input', () => { if (searchInput.value === "") filterLibrary(); });
 
-    // --- 4. GESTION ADMINISTRATION (BOUTON + ET JSON) ---
-    openAdminBtn.onclick = () => {
-        adminPanel.style.display = 'flex';
-        genCodeSection.style.display = 'none';
-    };
-
+    // --- 4. ADMIN ---
+    openAdminBtn.onclick = () => { adminPanel.style.display = 'flex'; genCodeSection.style.display = 'none'; };
     closeAdminBtn.onclick = () => { adminPanel.style.display = 'none'; };
 
     btnSaveAction.onclick = () => {
@@ -114,24 +104,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btnCopyDB.onclick = function() {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            const originalText = this.innerText;
+            const oldText = this.innerText;
             this.innerText = "✓ Code copié !";
-            setTimeout(() => { this.innerText = originalText; }, 2000);
+            setTimeout(() => { this.innerText = oldText; }, 2000);
         });
     };
 
-    // --- 5. MODALE & GALERIE ---
+    // --- 5. MODALE & GALERIE (Correction flèches) ---
     const updateGalleryImage = (index) => {
+        if (!currentGalleryImages[index]) return;
         currentImgIndex = index;
         document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
         document.querySelectorAll('.thumb').forEach((t, i) => t.classList.toggle('active', i === currentImgIndex));
     };
 
     document.addEventListener('click', e => {
-        // --- BOUTON MODIFIER ---
+        // Modifier/Supprimer
         if (e.target.classList.contains('btn-edit-card')) {
-            const idx = e.target.getAttribute('data-idx');
-            const data = promptDatabase[idx];
+            const data = promptDatabase[e.target.dataset.idx];
             document.getElementById('adminTitle').value = data.title;
             document.getElementById('adminStyles').value = data.styles;
             document.getElementById('adminImg').value = data.img.join(',');
@@ -140,25 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // --- BOUTON SUPPRIMER ---
-        if (e.target.classList.contains('btn-delete-card')) {
-            if(confirm("Supprimer ce prompt ?")) {
-                const idx = e.target.getAttribute('data-idx');
-                promptDatabase.splice(idx, 1);
-                renderLibrary();
-                genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
-                genCodeSection.style.display = 'block';
-                adminPanel.style.display = 'flex';
-            }
-            return;
-        }
-
-        // --- OUVERTURE MODALE (AVEC MASQUAGE DES FLÈCHES) ---
+        // Ouverture modale
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
-            
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             
@@ -168,12 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
             
             thumbContainer.innerHTML = "";
 
-            // LOGIQUE DE MASQUAGE DES FLÈCHES ET MINIATURES
             if (currentGalleryImages.length > 1) {
-                // S'il y a plusieurs images : on affiche flèches et miniatures
                 if (prevBtn) prevBtn.style.display = 'block';
                 if (nextBtn) nextBtn.style.display = 'block';
-
                 currentGalleryImages.forEach((src, i) => {
                     const t = document.createElement('img');
                     t.src = src; t.className = `thumb ${i===0?'active':''}`;
@@ -181,42 +154,33 @@ document.addEventListener("DOMContentLoaded", () => {
                     thumbContainer.appendChild(t);
                 });
             } else {
-                // S'il n'y a qu'une image : on cache flèches et miniatures
                 if (prevBtn) prevBtn.style.display = 'none';
                 if (nextBtn) nextBtn.style.display = 'none';
-                // thumbContainer est déjà vidé par .innerHTML = ""
             }
             
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }
 
-        // --- BOUTON COPIER (Gère Grille ET Modale) ---
+        // Copie
         if (e.target.classList.contains('btn-copy')) {
-            let text = "";
-            if (e.target.id === "modalCopyBtn") {
-                // Copie depuis la modale
-                text = document.getElementById('modalDescription').innerText;
-            } else {
-                // Copie depuis une carte de la grille
-                text = e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
-            }
+            const text = (e.target.id === "modalCopyBtn") 
+                ? document.getElementById('modalDescription').innerText 
+                : e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
 
             navigator.clipboard.writeText(text).then(() => {
-                const b = e.target;
-                const old = b.innerText;
-                b.innerText = "✓ Copié !";
+                const b = e.target; const old = b.innerText; b.innerText = "✓ Copié !";
                 setTimeout(() => b.innerText = old, 2000);
             });
         }
 
-        // --- FERMETURES ---
-        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
+        // Fermeture
+        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.classList.contains('closeModal')) {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
-        // --- NAVIGATION GALERIE (N'est appelée que si les boutons sont visibles) ---
+        // Navigation
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);
@@ -227,7 +191,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // --- 6. FILTRES CATÉGORIES ---
     document.querySelectorAll('.style-card[data-filter]').forEach(b => {
         b.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));
@@ -236,6 +199,5 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    // Initialisation
     renderLibrary();
 });

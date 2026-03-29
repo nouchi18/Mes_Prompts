@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "PORTRAIT ÉDITORIAL CINÉMATOGRAPHIQUE",
+    "styles": "femme fashion cinématique",
+    "img": [
+        "Images/IMG_20260329_212936.png"
+    ],
+    "prompt": "Un portrait éditorial cinématographique et de haute couture d’une femme sophistiquée appuyée contre une rampe en bois sur un yacht de luxe vintage au coucher du soleil. Elle porte un chapeau architectural noir avant-gardiste à large bord avec des textures en maille transparente et un\nnœud structurel. Sa tenue est une robe de haute couture en dentelle noire complexe avec un profond décolleté en V et des manches bouffantes. Elle est ornée d’un collier ras de cou en diamant et perle orné et de boucles d’oreilles assorties.\nÉclairage et atmosphère : La lumière du soleil douce et dorée se reflétant sur les vagues de l’océan en arrière-plan, créant une lueur chaude sur sa peau et une lumière de contour subtile.\nDes ombres profondes et sombres soulignent les textures de la dentelle et de la soie.\nDétails techniques : Tourné sur un film de 35 mm, faible profondeur de champ avec un arrière-plan marin flou, gradation des couleurs riche avec des tons chauds et des ombres aux tons turquoise, résolution de 8k, textures de tissus très détaillées, composition élégante et posée.\n\n• Style de la mode : Utilisez des termes comme Haute Couture, Avant-garde et d’inspiration édouardienne pour maintenir ce look de luxe dramatique et historique.\n• Le chapeau : Des mots-clés comme Large-brimmed, Architectural et Tulle sont essentiels pour cette silhouette de couvre-chef spécifique.\n• Le cadre : Mentionner un yacht vintage ou un paquebot fournit l’éclairage intérieur étroit et doré vu sur la photo.\n• Palette de couleurs : Spécifiez l’or muet, les noirs profonds et les larmes d’océan pour obtenir ce niveau de couleur cinématographique spécifique.\nImage ratio : 2/3."
+},
+    {
     "title": "PORTRAIT DECOLLETE",
     "styles": "femme fashion portrait",
     "img": [

@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME BODY STUDIO",
+    "styles": "femme studio",
+    "img": [
+        "Images/IMG_20260329_225014.png"
+    ],
+    "prompt": "Photo professionnelle en noir et blanc prise en studio, représentant une femme élégante au corps athlétique, aux courbes harmonieuses et aux proportions équilibrées. Veuillez vous inspirer de la photo ci-jointe en conservant les traits du visage, et optez pour un body minimaliste à fines bretelles et en tissu légèrement texturé, moulant. Le mannequin adopte une pose inclinée et sophistiquée, le poids du corps reposant sur une jambe, ce qui crée une légère courbe au niveau des hanches. Une main est posée contre le mur latéral, tandis que l'autre descend naturellement le long du corps, transmettant légèreté et maîtrise.\nExpression faciale neutre avec une légère intensité, regard direct vers l'appareil photo, transmettant confiance et sensualité subtile. Cheveux lisses et lâchés, tombant naturellement sur les épaules, avec une finition soignée.\nEnvironnement de studio épuré avec fond infini incurvé (cyclorama), créant une transition douce entre le mur et le sol. Éclairage doux et diffus provenant latéralement (lumière principale latérale), créant des ombres délicates qui mettent en valeur les contours du corps et la texture de la peau, avec un contraste modéré et une esthétique éditoriale.\nPhotographie en noir et blanc (style éditorial haut de gamme), avec une mise au point nette, une haute définition, une peau au rendu naturel (sans lissage excessif), des ombres douces et élégantes. Composition verticale (format 9:16), cadrage en pied, légère perspective frontale.\nObjectif équivalent à 50 mm ou 85 mm, profondeur de champ moyenne, arrière-plan légèrement flou. Style inspiré de la photographie de mode et des campagnes de luxe minimalistes.\n🎯 Consignes négatives (important) :\nmauvaise qualité, éclairage dur, ombres exagérées, déformation du corps, proportions irréalistes, visage déformé, peau artificielle, retouche excessive, bruit, grain, arrière-plan encombré, objets indésirables, bras ou jambes multiples, mains déformées, flou excessif.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME VINTAGE AVIATRICE STUDIO",
     "styles": "femme fashion studio",
     "img": [

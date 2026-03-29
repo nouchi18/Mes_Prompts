@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "AFFICHE ANNIVERSAIRE FEMME",
+    "styles": "femme fashion studio affiche",
+    "img": [
+        "Images/IMG_20260329_225956.png"
+    ],
+    "prompt": "Un design vibrant de flyer d’anniversaire sur le thème du magenta célébrant 'TushGraphix', avec trois portraits d'une femme en tenue extravagante. La composition comprend un grand portrait en gros plan à gauche avec une pose main-à-bouche, un portrait central corps entier debout avec un bâton de marche et un troisième gros plan semi-transparent à droite.\nLe flyer comprend une barre latérale violet foncé à gauche avec la date \"01 AVRIL 2026\" écrite verticalement en blanc. Un élément graphique dans le coin inférieur droit présente le texte « JOYEUX ANNIVERSAIRE » sur des formes magenta superposées. Tout l’arrière-plan est un dégradé dynamique de magenta profond et lumineux avec des stries lumineuses et des éléments hexagonaux.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME BODY STUDIO",
     "styles": "femme studio",
     "img": [

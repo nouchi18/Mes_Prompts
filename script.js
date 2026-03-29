@@ -62,9 +62,24 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    // --- 3. GESTION ÉVÉNEMENTS RECHERCHE (CORRIGÉ) ---
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
+    // --- 3. ÉVÉNEMENTS CLAVIER (RECHERCHE + TOUCHE M) ---
+    document.addEventListener('keydown', (e) => {
+        // Si on n'est pas en train d'écrire dans un champ texte (input ou textarea)
+        const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
+
+        // Raccourci touche "m" pour l'admin
+        if (e.key.toLowerCase() === 'm' && !isTyping) {
+            e.preventDefault();
+            if (adminPanel.style.display === 'flex') {
+                adminPanel.style.display = 'none';
+            } else {
+                adminPanel.style.display = 'flex';
+                genCodeSection.style.display = 'none';
+            }
+        }
+
+        // Touche Entrée pour la recherche (uniquement si on est dans le champ de recherche)
+        if (e.key === 'Enter' && e.target === searchInput) {
             e.preventDefault(); 
             filterLibrary();
         }
@@ -74,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (searchInput.value === "") filterLibrary();
     });
 
-    // --- 4. GESTION DU MODE ADMIN (LE BOUTON +) ---
+    // --- 4. GESTION DU MODE ADMIN (CLICS) ---
     openAdminBtn.onclick = () => {
         adminPanel.style.display = 'flex';
         genCodeSection.style.display = 'none';
@@ -92,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
             prompt: document.getElementById('adminPrompt').value
         };
 
-        // Génération du code pour database.js
         const jsonCode = JSON.stringify(newPrompt, null, 4);
         genCodeArea.value = jsonCode + ",";
         genCodeSection.style.display = 'block';
@@ -101,10 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('btnCopyDB').onclick = () => {
         genCodeArea.select();
         document.execCommand('copy');
-        alert("Code copié ! Ajoute-le dans ton fichier database.js");
+        alert("Code copié !");
     };
 
-    // --- 5. ÉVÉNEMENTS CLICS (MODALE & COPIE) ---
+    // --- 5. ÉVÉNEMENTS CLICS (MODALE & GALERIE) ---
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
         document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
@@ -117,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (card && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
-            
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             
@@ -134,7 +147,6 @@ document.addEventListener("DOMContentLoaded", () => {
             } else {
                 document.querySelectorAll('.nav-btn').forEach(b => b.style.display = 'none');
             }
-            
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }

@@ -75,7 +75,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
-        // Touche M : Mode Edition sur les cartes
         if (e.key.toLowerCase() === 'm' && !isTyping) {
             e.preventDefault();
             isAdminMode = !isAdminMode;
@@ -84,7 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Touche Entrée : Recherche
         if (e.key === 'Enter' && e.target === searchInput) {
             e.preventDefault();
             filterLibrary();
@@ -155,24 +153,40 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // --- OUVERTURE MODALE ---
+        // --- OUVERTURE MODALE (AVEC MASQUAGE DES FLÈCHES) ---
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
             currentGalleryImages = imgData.split(',');
+            
             document.getElementById('modalTitle').innerText = card.querySelector('.card-header').innerText;
             document.getElementById('modalDescription').innerText = card.querySelector('.full-prompt-hidden').innerText;
             
             const thumbContainer = document.getElementById('modalThumbs');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
             thumbContainer.innerHTML = "";
+
+            // LOGIQUE DE MASQUAGE DES FLÈCHES ET MINIATURES
             if (currentGalleryImages.length > 1) {
+                // S'il y a plusieurs images : on affiche flèches et miniatures
+                if (prevBtn) prevBtn.style.display = 'block';
+                if (nextBtn) nextBtn.style.display = 'block';
+
                 currentGalleryImages.forEach((src, i) => {
                     const t = document.createElement('img');
                     t.src = src; t.className = `thumb ${i===0?'active':''}`;
                     t.onclick = () => updateGalleryImage(i);
                     thumbContainer.appendChild(t);
                 });
+            } else {
+                // S'il n'y a qu'une image : on cache flèches et miniatures
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                // thumbContainer est déjà vidé par .innerHTML = ""
             }
+            
             updateGalleryImage(0);
             document.getElementById('promptModal').style.display = 'flex';
         }
@@ -202,7 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
             adminPanel.style.display = 'none';
         }
 
-        // --- NAVIGATION GALERIE ---
+        // --- NAVIGATION GALERIE (N'est appelée que si les boutons sont visibles) ---
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);

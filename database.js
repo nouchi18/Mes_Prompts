@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME VINTAGE AVIATRICE STUDIO",
+    "styles": "femme fashion studio",
+    "img": [
+        "Images/IMG_20260329_224610.png"
+    ],
+    "prompt": "Photographie cinématique d'une femme étendue, élégante et raffinée stylisée façon pin-up rétro, tenue d’aviatrice vintage avec mini-jupe crayon kaki et blouson aviateur court, haut crème avec nœud bordeaux, bas noirs, escarpins raffinés, lunettes rondes d’aviatrice, yeux clos, coiffure ondulée gonflée typique des années 40, cheveux blonds dorés. Pose pleine d’assurance sur fond dégradé de blanc,\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME VINTAGE EN STUDIO",
     "styles": "femme fashion studio",
     "img": [

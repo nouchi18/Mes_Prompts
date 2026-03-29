@@ -51,7 +51,7 @@
     <!-- Modale de Visualisation -->
     <div id="promptModal" class="modal">
         <div class="modal-container">
-            <span class="modal-close">&times;</span>
+            <span class="modal-close" id="closeModal">&times;</span>
             <div class="modal-left">
                 <div class="modal-gallery-wrapper">
                     <button class="nav-btn prev-btn">&#10094;</button>
@@ -70,20 +70,20 @@
         </div>
     </div>
 
-    <!-- Panneau Admin -->
+    <!-- Panneau Admin (Correction Pleine Largeur) -->
     <div id="adminPanel" class="modal">
         <div class="modal-container admin-mode">
             <span class="modal-close" id="closeAdmin">&times;</span>
-            <div class="modal-body">
-                <h2 id="adminModalTitle">Gestion Database</h2>
-                <div class="admin-form" id="adminForm">
+            <div class="modal-body" style="width: 100%;">
+                <h2 id="adminModalTitle" style="margin-bottom: 20px;">Gestion Database</h2>
+                <div class="admin-form">
                     <input type="text" id="adminTitle" placeholder="Titre">
                     <input type="text" id="adminStyles" placeholder="Styles (ex: portraits 3d)">
                     <input type="text" id="adminImg" placeholder="Lien(s) image (séparez par virgule)">
-                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="10"></textarea>
-                    <button id="btnSaveAction" class="btn-copy">Générer le code</button>
+                    <textarea id="adminPrompt" placeholder="Texte du prompt..." rows="8"></textarea>
+                    <button id="btnSaveAction" class="btn-copy">Générer le code JSON</button>
                 </div>
-                <div id="generatedCodeSection" style="display:none; margin-top: 20px;">
+                <div id="generatedCodeSection" style="display:none; width: 100%; margin-top: 25px;">
                     <textarea id="generatedCode" readonly placeholder="Le code apparaîtra ici..."></textarea>
                     <button id="btnCopyDB" class="btn-copy" style="background: #10b981; margin-top:10px;">Copier le code Database</button>
                 </div>

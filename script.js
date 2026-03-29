@@ -14,11 +14,13 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentImgIndex = 0;
     let isAdminMode = false;
 
-    // --- 1. GÉNÉRATION GRILLE ---
+    // --- 1. GÉNÉRATION DE LA GRILLE ---
     const renderLibrary = () => {
         grid.innerHTML = "";
         if (typeof promptDatabase !== 'undefined') {
-            promptDatabase.forEach((data, index) => grid.appendChild(createCardElement(data, index)));
+            promptDatabase.forEach((data, index) => {
+                grid.appendChild(createCardElement(data, index));
+            });
         }
         updateStats();
     };
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const card = document.createElement('article');
         card.className = 'card';
         card.setAttribute('data-style', data.styles);
+        
         const mainImg = Array.isArray(data.img) ? data.img[0] : data.img;
         const allImgs = Array.isArray(data.img) ? data.img.join(',') : data.img;
 
@@ -46,7 +49,12 @@ document.addEventListener("DOMContentLoaded", () => {
         return card;
     };
 
-    // --- 2. RECHERCHE ET FILTRES ---
+    // --- 2. LOGIQUE DE FILTRAGE ---
+    const updateStats = () => {
+        const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
+        counter.innerText = `${visible} Prompt(s) affiché(s)`;
+    };
+
     const filterLibrary = () => {
         const activeBtn = document.querySelector('.style-card.active');
         const activeStyle = activeBtn ? activeBtn.getAttribute('data-filter') : "all";
@@ -62,15 +70,11 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     };
 
-    const updateStats = () => {
-        const visible = [...document.querySelectorAll('.card')].filter(c => c.style.display !== "none").length;
-        counter.innerText = `${visible} Prompt(s) affiché(s)`;
-    };
-
-    // --- 3. CLAVIER (ENTRÉE & M) ---
+    // --- 3. ÉVÉNEMENTS CLAVIER (ENTRÉE & TOUCHE M) ---
     document.addEventListener('keydown', (e) => {
         const isTyping = e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA';
 
+        // Touche M : Mode Edition (Afficher les boutons Modifier/Supprimer)
         if (e.key.toLowerCase() === 'm' && !isTyping) {
             e.preventDefault();
             isAdminMode = !isAdminMode;
@@ -79,16 +83,23 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
+        // Touche Entrée : Lancer la recherche
         if (e.key === 'Enter' && e.target === searchInput) {
             e.preventDefault();
             filterLibrary();
         }
     });
 
-    searchInput.addEventListener('input', () => { if (searchInput.value === "") filterLibrary(); });
+    searchInput.addEventListener('input', () => {
+        if (searchInput.value === "") filterLibrary();
+    });
 
-    // --- 4. ADMIN ACTIONS ---
-    openAdminBtn.onclick = () => { adminPanel.style.display = 'flex'; genCodeSection.style.display = 'none'; };
+    // --- 4. GESTION ADMINISTRATION ---
+    openAdminBtn.onclick = () => {
+        adminPanel.style.display = 'flex';
+        genCodeSection.style.display = 'none';
+    };
+
     closeAdminBtn.onclick = () => { adminPanel.style.display = 'none'; };
 
     btnSaveAction.onclick = () => {
@@ -98,19 +109,20 @@ document.addEventListener("DOMContentLoaded", () => {
             img: document.getElementById('adminImg').value.split(','),
             prompt: document.getElementById('adminPrompt').value
         };
+        // Affiche le code généré dans le textarea fixe
         genCodeArea.value = JSON.stringify(newPrompt, null, 4) + ",";
         genCodeSection.style.display = 'block';
     };
 
     btnCopyDB.onclick = function() {
         navigator.clipboard.writeText(genCodeArea.value).then(() => {
-            const oldText = this.innerText;
+            const originalText = this.innerText;
             this.innerText = "✓ Code copié !";
-            setTimeout(() => { this.innerText = oldText; }, 2000);
+            setTimeout(() => { this.innerText = originalText; }, 2000);
         });
     };
 
-    // --- 5. CLICS GLOBAUX ---
+    // --- 5. MODALE & ACTIONS CLICS ---
     const updateGalleryImage = (index) => {
         currentImgIndex = index;
         document.getElementById('modalImg').src = currentGalleryImages[currentImgIndex];
@@ -118,8 +130,10 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     document.addEventListener('click', e => {
+        // Bouton Modifier
         if (e.target.classList.contains('btn-edit-card')) {
-            const data = promptDatabase[e.target.dataset.idx];
+            const idx = e.target.getAttribute('data-idx');
+            const data = promptDatabase[idx];
             document.getElementById('adminTitle').value = data.title;
             document.getElementById('adminStyles').value = data.styles;
             document.getElementById('adminImg').value = data.img.join(',');
@@ -128,9 +142,11 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Bouton Supprimer
         if (e.target.classList.contains('btn-delete-card')) {
-            if(confirm("Supprimer ?")) {
-                promptDatabase.splice(e.target.dataset.idx, 1);
+            if(confirm("Supprimer ce prompt de la session ?")) {
+                const idx = e.target.getAttribute('data-idx');
+                promptDatabase.splice(idx, 1);
                 renderLibrary();
                 genCodeArea.value = "const promptDatabase = " + JSON.stringify(promptDatabase, null, 4) + ";";
                 genCodeSection.style.display = 'block';
@@ -139,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        // Clic sur une carte (Ouverture galerie)
         const card = e.target.closest('.card');
         if (card && !e.target.closest('.admin-controls') && !e.target.classList.contains('btn-copy')) {
             const imgData = card.querySelector('.card-img').getAttribute('data-all-imgs');
@@ -160,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('promptModal').style.display = 'flex';
         }
 
+        // Bouton Copier Prompt
         if (e.target.classList.contains('btn-copy')) {
             const text = e.target.closest('.card-content').querySelector('.full-prompt-hidden').innerText;
             navigator.clipboard.writeText(text).then(() => {
@@ -168,11 +186,13 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal' || e.target.id === 'adminPanel') {
+        // Fermetures Modales
+        if (e.target.classList.contains('modal-close') || e.target.id === 'promptModal') {
             document.getElementById('promptModal').style.display = 'none';
             adminPanel.style.display = 'none';
         }
 
+        // Navigation Galerie
         if (e.target.classList.contains('prev-btn')) {
             currentImgIndex = (currentImgIndex - 1 + currentGalleryImages.length) % currentGalleryImages.length;
             updateGalleryImage(currentImgIndex);
@@ -183,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Filtres
     document.querySelectorAll('.style-card[data-filter]').forEach(b => {
         b.onclick = () => {
             document.querySelectorAll('.style-card').forEach(x => x.classList.remove('active'));

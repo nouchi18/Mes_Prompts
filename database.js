@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "FEMME PORTRAIT FASHION",
+    "styles": "femme portrait fashion",
+    "img": [
+        "Images/IMG_20260329_215803.png"
+    ],
+    "prompt": "Créez un portrait hyperréaliste et de grande qualité d'une femme en gros plan, de profil par-dessus l'épaule, peau lisse en porcelaine, le regard expressif tourné vers l'objectif ; cheveux rassemblés en un chignon négligé avec des mèches rebelles, maquillage naturel et lumineux mettant l'accent sur les lèvres et les sourcils ; accessoires — lunettes élégantes à monture métallique fine et verres dégradés rouge-orange, boucles d'oreilles, plusieurs piercings à l'oreille ; vêtements — casquette olive avec une chaîne décorative, veste légère tombant sur l'épaule, dévoilant la clavicule ; composition — grand portrait, mise au point sur le visage et les accessoires, arrière-plan clair et artistique avec une texture et un dégradé doux ; Éclairage : lumière de studio chaude et douce avec un léger effet de contre-jour, soulignant la texture de la peau et la profondeur des couleurs, ombres fluides ; Photoréalisme, ultra-détail (8K), profondeur de champ (f/1,8), éclairage cinématographique, retouche professionnelle, teintes chaudes et saturées, haute netteté, HDR, grain léger, style beauté éditorial de mode.\nImage ratio : 2/3."
+},
+    {
     "title": "FEMME FASHION ROYALE GOTHIQUE",
     "styles": "femme fashion",
     "img": [

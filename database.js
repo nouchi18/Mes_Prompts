@@ -1,5 +1,13 @@
 const promptDatabase = [
     {
+    "title": "BATTEUR GUERRIER NORDIQUE",
+    "styles": "homme cinematique",
+    "img": [
+        "Images/13312.png"
+    ],
+    "prompt": "Un batteur de guerrier nordique cinématographique hyperréaliste dans un moment décisif, annonciateur de guerre, avec un regard puissant et déterminé signalant le début de la bataille. Le guerrier est un combattant nordique barbu et moustachu portant une tenue de guerrier authentique, capturé en mouvement tout en jouant d’un seul tambour de guerre massif. Il utilise deux grands baguettes rembourrées, frappant dans une séquence alternée rythmique avec les deux mains.\nLe tambour est conçu de manière unique : un seul grand tambour central, avec des éléments sculptés en forme de corne sur ses côtés, placé sur un sol acoustique spécialement doublé qui améliore l’impact de chaque coup. Chaque coup est dynamique, montrant un mouvement visible et une force cinématographique.\nDerrière lui se dresse une vaste armée nordique, floue mais imposante, formant une atmosphère de champ de bataille épique. La scène est ultra-cinématographique, dramatique et hyperréaliste, avec un fort contraste d’éclairage et une énergie d’impact au ralenti.\nUtilisez une image de référence pour la structure faciale et la présence du batteur. Toute la composition ressemble au moment exact avant l’éruption de la guerre—mythique, puissante et cinématographique.\nImage ratio : 2/3."
+},
+    {
     "title": "PORTRAIT CINÉMATOGRAPHIQUE ULTRARÉALISTE",
     "styles": "femme affiche",
     "img": [
